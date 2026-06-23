@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Fetch all tags (explicit refspec)
-        run: git fetch --force origin '+refs/tags/*:refs/tags/*'
+        run: git fetch origin '+refs/tags/*:refs/tags/*'
 
       - name: Verify CHANGELOG entries match git tags
         run: |
