@@ -22,7 +22,7 @@ stay one major-version ahead of any specific FTC SDK binding.
 
 ### Fixed
 - `CHANGELOG.md` structural fixes: merged duplicate `### Fixed`
-  sections, added missing v500.29.0/v500.31.0/v500.32.0 entries,
+  sections, added missing v500.31.0/v500.32.0 entries,
   advanced base.
 
 ## [v500.32.0] - 2026-06-22
