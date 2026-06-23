@@ -112,6 +112,16 @@ under `test/` so the unit-test invocation still works.
   so the suite runs with nothing more than a JDK.  New contributors
   reflexively `gradle init`-ing a JUnit setup is the most common
   accidental regression.
+- **Don't forget the `action-drift` workflow runs weekly.**  Whenever
+  you add a new third-party `uses: <owner>/<repo>@<ref>` (`@vN`-style
+  major pin) to any workflow file, expect a single GitHub issue
+  labeled `dependencies-drift` to appear within ~7 days if your pin is
+  behind the upstream latest tag within the same major.  This is the
+  deliberate replacement for `dependabot.yml` (which we deliberately
+  do not run, see `SECURITY.md`); bumping the `@vN` portion is the
+  expected follow-up.  The same workflow also enumerates
+  `uses: docker://image:tag` actions in the same issue so a Docker
+  action is never silently dropped from the scan.
 
 ## License
 

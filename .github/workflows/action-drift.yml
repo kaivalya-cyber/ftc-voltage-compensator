@@ -211,6 +211,9 @@ jobs:
             // run does not render an empty `## Drifted pins` heading or the
             // misleading "still pinned behind the upstream latest tag"
             // intro paragraph (which only applies to `@`-style actions).
+            // Each section is pushed as a raw string array; a single final
+            // map + join handles both per-section `\n` joining and between
+            // sections `\n\n` paragraph breaks.
             const sections = [];
 
             if (drifted > 0) {
@@ -223,7 +226,7 @@ jobs:
                 '## Drifted pins',
                 '',
                 ...lines,
-              ].join('\n'));
+              ]);
             }
 
             if (dockerActions.size > 0) {
@@ -237,7 +240,7 @@ jobs:
                 '## Docker container actions (registry-level only; drift detection skipped)',
                 '',
                 ...Array.from(dockerActions).sort().map(d => '- `' + d + '`'),
-              ].join('\n'));
+              ]);
             }
 
             sections.push([
@@ -250,9 +253,9 @@ jobs:
               'replacement for that lossless auto-bump story.',
               '',
               '> This issue is auto-generated; close it after bumping.',
-            ].join('\n'));
+            ]);
 
-            const body = sections.join('\n\n');
+            const body = sections.map(s => s.join('\n')).join('\n\n');
 
             const issues = await github.paginate(
               github.rest.issues.listForRepo,

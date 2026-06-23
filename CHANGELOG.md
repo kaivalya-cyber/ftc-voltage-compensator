@@ -7,6 +7,187 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.8.1] - 2026-06-24
+
+### Fixed
+- `.github/workflows/action-drift.yml`: issue body assembled from
+  conditional sections so a docker-only run no longer renders an
+  empty `## Drifted pins` heading or a misleading "still pinned
+  behind the upstream latest tag" intro.
+- `ARCHITECTURE.md` tuning-recipe: dropped `(default \u2026)`
+  parenthetical from each `### CONSTANT_NAME` sub-heading so the
+  rendered GitHub slug (`#brownout_threshold` etc.) matches the
+  table cross-reference links exactly.
+
+## [v500.8.0] - 2026-06-24
+
+### Added
+- `.github/workflows/action-drift.yml`: docker-container actions
+  (`uses: docker://image:tag`) surfaced in the drift-report issue
+  body and indexed in the dynamically-derived title so a docker-only
+  run produces an actionable issue instead of a misleading
+  "0 pin(s) behind upstream" report.
+- `ARCHITECTURE.md` precision: tuning-recipe bullets promoted to
+  `### CONSTANT_NAME` sub-headings so the constants-table links
+  jump directly at each item rather than to the section preface.
+
+### Changed
+- `./runtests.sh` switched to POSIX-portable word-split
+  (`set -- $SOURCES; javac \u2026 "$@"`) so paths containing
+  whitespace (e.g. `~/Team Code/voltage-sensor`) survive as
+  individual javac arguments.
+
+## [v500.7.0] - 2026-06-24
+
+### Added
+- `.github/workflows/action-drift.yml`: enumerated
+  `uses: docker://image:tag` actions and logged them as
+  registry-only entries so they are no longer silently dropped
+  from the scan.
+- `./runtests.sh`: `[ -z "$SOURCES" ]` precondition that exits
+  with a clear "no .java sources found" message on empty-globs
+  instead of letting javac emit a generic usage error.
+- `ARCHITECTURE.md`: each tunable row in the "Key constants and why"
+  table ends with a `see [Tuning recipe \u00a7N]` link, and the
+  non-tunable rows are flagged as "not a tuning knob" so a
+  contributor doesn't scroll-hunt for tunings that don't exist.
+
+### Changed
+- `.github/workflows/action-drift.yml`: clarified the `upstreamMap`
+  comment so future contributors understand identity entries
+  (key === value) are NOT no-ops but trigger the walk-up
+  logic, and added a commented-out example showing the format for
+  a non-identity hard redirect.
+
+## [v500.6.0] - 2026-06-24
+
+### Added
+- `ARCHITECTURE.md` tuning recipe documents **both** `Raise` and
+  `Lower` directions for each of the 6 constants
+  (`BROWNOUT_THRESHOLD`, `MAX_SAG_COMPENSATION`,
+  `MAX_SERVO_COMPENSATION`, `ROLLING_WINDOW_SIZE`,
+  `TREND_WINDOW_SIZE`, `TREND_CORRECTION_GAIN`) so a tuner at
+  competition can reason about the symmetric trade-off.
+
+### Changed
+- `.github/workflows/action-drift.yml`: hand-maintained hard-coded
+  `actions = [\u2026]` array replaced with auto-extraction that walks
+  `.github/workflows/*.yml`, regex-extracts every
+  `uses: <owner>/<repo>@<ref>` line, and resolves the few cases
+  where the effective upstream repo differs from the `uses:`
+  prefix (e.g. `github/codeql-action/init@v3 \u2192
+  github/codeql-action`).
+- `./runtests.sh` javac file list mirrored from
+  `.github/workflows/build.yml` (the same `find . -maxdepth 1
+  -name '*.java'` + `find test -name '*.java'` glob) so adding
+  a new stub interface no longer needs to update two places.
+
+## [v500.5.1] - 2026-06-24
+
+### Fixed
+- `.github/workflows/action-drift.yml`: drift check `upstreamLatest
+  === currentRef` could never match for major-version pins
+  (`v4` vs `v4.2.0`), so the workflow would have opened a tracking
+  issue on every weekly run regardless of drift; replaced with
+  `upstreamLatest.startsWith(currentRef + '.')` so a `v4` pin against
+  upstream `v4.2.0` is properly up-to-date.  Plus explicit
+  semver-sort because `repos.listTags` returns commit-date order.
+- `ARCHITECTURE.md` tuning recipe: `Lower BROWNOUT_THRESHOLD if the
+  robot browns out before your end-of-match voltage` had the
+  direction inverted (lowering *delays* protection); corrected
+  to `**Raise**\u2026`.
+
+## [v500.5.0] - 2026-06-24
+
+### Added
+- `ARCHITECTURE.md` (NEW): the single source of truth for "how
+  does this thing behave at runtime" before tuning.  Mermaid
+  state diagram (Nominal / Brownout transitions + factor
+  formula), per-loop sequence diagram (`OpMode \u2192 VC \u2192 Sensor`),
+  key-constants table with rationale, integration map for
+  `VoltageCompensatedTeleOp`, tuning recipe, cross-references to
+  `CONTRIBUTING.md` / `SECURITY.md` / `CHANGELOG.md`.
+- `.github/workflows/action-drift.yml` (NEW): weekly Monday cron
+  + `workflow_dispatch`.  Detects when any third-party action
+  used in `.github/workflows/*.yml` is pinned behind the upstream
+  latest tag within the same major, opens (or reuses) a single
+  GitHub issue labeled `dependencies-drift`.
+
+### Changed
+- `.github/workflows/build.yml`: manual 13-file javac list replaced
+  with a `find . -maxdepth 1 -name '*.java'` + `find test
+  -name '*.java'` glob.  New stub interface or test class no
+  longer requires a build.yml edit.
+- `CONTRIBUTING.md`: short note pointing new tuners to
+  `ARCHITECTURE.md` before reading the rest of the contributing
+  guide.
+
+## [v500.4.3] - 2026-06-23
+
+### Changed
+- `SECURITY.md` "Hardening guarantees" GitHub Actions bullet was
+  trimmed to scan-comparable length with the matrix / CodeQL /
+  wrapper SHA-256 bullets in the same section.  Cadence
+  duplication removed.
+
+## [v500.4.2] - 2026-06-23
+
+### Fixed
+- `SECURITY.md` trade-off clause: prior wording ("major-version
+  pins absorb all upstream breaking-change notices") was the
+  inverse of what's actually true.  Major-version pins
+  (`@v4`) auto-absorb upstream patches and security fixes;
+  exposure to breaking changes within a major version is
+  mitigated by the per-release review at every `v500.x` cut.
+
+## [v500.4.1] - 2026-06-23
+
+### Changed
+- `SECURITY.md`: dropped the stale `.github/dependabot.yml`
+  reference now that the file is gone; replaced with the actual
+  current procedure (major-version pins + manual quarterly-style
+  review tied to each `v500.x` release) and an explicit
+  "accepted trade-off" clause.
+
+## [v500.4.0] - 2026-06-23
+
+### Added
+- Multi-LTS CI matrix: JDK 11 + JDK 17 gate every push / pull
+  request, with per-JDK Gradle cache key (so caches don't bleed
+  across matrix entries) and `fail-fast: false`.
+- `SECURITY.md`: supported-versions table (only the latest
+  tag is patched), 72-hour acknowledgement SLA, 90-day
+  coordinated disclosure timeline.  Cross-references to CI,
+  CodeQL, and the gradle-wrapper SHA-256 pin as in-place
+  hardening.
+
+### Changed
+- `.github/workflows/build.yml`: dropped the backslash escapes
+  around `${{ matrix.java }}` so GitHub Actions substitution
+  actually fires (both JDKs were reading the literal string before).
+- `.github/workflows/build.yml`: workflow-level `permissions:
+  contents: read`, `timeout-minutes: 15`, and a
+  `concurrency` group with `cancel-in-progress` gated to PR
+  pushes only.
+- `.github/dependabot.yml` was removed (its scheduled check
+  was binding every commit to a chronic failure state during the
+  release pipeline); the project is intentionally shipped
+  without Dependabot and bumps third-party action versions
+  manually.
+
+## [v500.3.0] - 2026-06-23
+
+### Changed
+- `.github/workflows/codeql.yml`: `permissions: actions: read`
+  added to the existing block (which already had `security-events:
+  write` and `contents: read`); CodeQL's `java` analysis now
+  runs on push, pull_request, and weekly as a tripwire.
+- `.github/ISSUE_TEMPLATE/bug_report.yml` and
+  `feature_request.yml`: standard issue forms with severity
+  dropdown, version / JDK inputs, and reproduce-steps / expected
+  behaviour triplets so reporters include the right context
+  first try.
+
 ## [v500.2.0] - 2026-06-23
 
 ### Added
@@ -66,9 +247,20 @@ stay one major-version ahead of any specific FTC SDK binding.
   options, and FTC Android Studio wiring instructions.
 
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
-     comparison base below to the new tag (e.g. v500.3.0) and add a link
+     comparison base below to the new tag (e.g. v500.9.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.2.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.8.1...HEAD
+[v500.8.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.8.0...v500.8.1
+[v500.8.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.7.0...v500.8.0
+[v500.7.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.6.0...v500.7.0
+[v500.6.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.5.1...v500.6.0
+[v500.5.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.5.0...v500.5.1
+[v500.5.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.4.3...v500.5.0
+[v500.4.3]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.4.2...v500.4.3
+[v500.4.2]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.4.1...v500.4.2
+[v500.4.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.4.0...v500.4.1
+[v500.4.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.3.0...v500.4.0
+[v500.3.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.2.0...v500.3.0
 [v500.2.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.1.0...v500.2.0
 [v500.1.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.0.0...v500.1.0
 [v500.0.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/releases/tag/v500.0.0
