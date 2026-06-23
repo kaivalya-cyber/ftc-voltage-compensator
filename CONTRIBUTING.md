@@ -88,13 +88,15 @@ under `test/` so the unit-test invocation still works.
 3. Run `./runtests.sh` **and** `./gradlew runUnitTests` locally before
    opening the PR \u2014 both must report `Passed: 40`.
 4. Reference any open issue with `Fixes #N` notation.
-5. **Include the CHANGELOG entry in the release commit.** Write the
-   `[vX.Y.Z]` entry, advance the `[Unreleased]` comparison base,
-   and add the link reference as part of the same commit that gets
-   the release tag.  Do **not** create separate tags for
-   documentation-only commits — this creates an infinite recursive
-   loop (each CHANGELOG-fix commit needs its own entry, which
-   needs another commit, etc.).
+5. **Include the CHANGELOG entry in the release commit.** When you
+   are cutting a release tag, write the `[vX.Y.Z]` entry, advance
+   the `[Unreleased]` comparison base, and add the link reference
+   all in the same commit that receives the tag.  Do **not** create
+   separate tags for documentation-only commits — this creates an
+   infinite recursive loop (each CHANGELOG-fix commit needs its own
+   entry, which needs another commit, etc.).  For PRs that aren't
+   tagging a release, add the entry under `[Unreleased]` and let
+   the person cutting the tag finalize it.
 6. Don't introduce external dependencies (no Maven Central jars, no
    Android Gradle plugin, no Maven, no Gradle wrapper-shaking).  The
    library must remain drop-in for any FTC project.
