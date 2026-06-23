@@ -20,10 +20,12 @@ stay one major-version ahead of any specific FTC SDK binding.
 
 ## [v500.30.0] - 2026-06-22
 
-### Fixed
-- `CHANGELOG.md` v500.28.0 entry: "Changed" bullet base-advance
-  direction corrected from `v500.26.0 \u2192 v500.27.0` to
-  `v500.27.0 \u2192 v500.28.0`.
+### Added
+- `CHANGELOG.md` entry for v500.29.0 (base-advance direction fix).
+
+### Changed
+- `[Unreleased]` comparison base advanced from `v500.28.0` to
+  `v500.29.0`.
 
 ## [v500.29.0] - 2026-06-22
 
