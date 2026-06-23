@@ -123,16 +123,20 @@ internal state is fresh.
 ## Tuning recipe
 
 1. Measure voltages during a typical match with telemetry visible.
-2. Lower `BROWNOUT_THRESHOLD` if the robot browns out before your
-   nominal end-of-match voltage.
+2. **Raise** `BROWNOUT_THRESHOLD` if the robot browns out before your
+   nominal end-of-match voltage.  A higher threshold engages the
+   half-power protection earlier; a lower threshold *delays* it and
+   makes brownouts *more* likely.
 3. Lower `MAX_SAG_COMPENSATION` if you see motor-amp trips in low
    voltage (the 1.4× limit is the highest "safe" form factor; 1.25×
    may already be too aggressive for some 12 V gearmotors).
 4. Raise `ROLLING_WINDOW_SIZE` if you see jitter in the telemetry line
    (but expect a lag penalty: smoothed voltage takes longer to react
    to a sudden load).
-5. Tune `TREND_CORRECTION_GAIN` near zero; it's a predictive nudge that
-   should never dominate the regression.
+5. Lower `TREND_CORRECTION_GAIN` to disable the predictive sag
+   pre-emption entirely (set to 0.0 for the most conservative
+   driving).  Raising it amplifies noisy slopes — keep it low
+   unless you have a stable pack and want the extra boost.
 
 ## Cross-references
 

@@ -43,6 +43,12 @@ jobs:
             // Hard-coded list of every third-party action we reference, paired
             // with the upstream repo to query.  Adding a new third-party action
             // to ANY workflow file means adding an entry here.
+            // Hard-coded list of every third-party action we reference,
+            // paired with the upstream repo to query.
+            //
+            // IMPORTANT: when adding a new third-party action to ANY
+            // workflow file, add an entry here too; otherwise this
+            // workflow silently under-reports drift.
             const actions = [
               { uses: 'actions/checkout@v4',             upstream: 'actions/checkout' },
               { uses: 'actions/setup-java@v4',           upstream: 'actions/setup-java' },
@@ -50,6 +56,21 @@ jobs:
               { uses: 'github/codeql-action/init@v3',    upstream: 'github/codeql-action' },
               { uses: 'github/codeql-action/analyze@v3', upstream: 'github/codeql-action' },
             ];
+
+            // ListTags is ordered by commit date, NOT semver.  Sort
+            // highest-first within the major we care about so the
+            // "latest" reported here is genuinely the highest
+            // released tag, not just whichever tag landed last on
+            // git's HEAD.
+            const semverCompare = (a, b) => {
+              const pa = a.replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+              const pb = b.replace(/^v/i, '').split('.').map(n => parseInt(n, 10) || 0);
+              for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
+                const va = pa[i] || 0, vb = pb[i] || 0;
+                if (va !== vb) return vb - va;
+              }
+              return 0;
+            };
 
             const lines = [];
             let drifted = 0;
@@ -65,9 +86,15 @@ jobs:
                 const major = currentRef.replace(/^v/i, '').split('.')[0];
                 const majorTags = tags
                   .map(t => t.name)
-                  .filter(name => new RegExp(`^v?${major}\\.`).test(name));
+                  .filter(name => new RegExp('^v?' + major + '\\.').test(name))
+                  .sort(semverCompare);
                 const upstreamLatest = majorTags[0] || '(none found)';
-                const upToDate = upstreamLatest === currentRef;
+                // The current pin is a major-version tag like `v4`;
+                // the upstream latest is a concrete tag like `v4.2.0`.
+                // The pin is up-to-date iff upstreamLatest is either
+                // identical to currentRef or shares the major prefix.
+                const upToDate = upstreamLatest === currentRef
+                  || upstreamLatest.startsWith(currentRef + '.');
                 lines.push(
                   '- `' + a.uses + '` '
                   + (upToDate ? '\u2713 up to date' : '\u2717 upstream latest: `' + upstreamLatest + '`')
