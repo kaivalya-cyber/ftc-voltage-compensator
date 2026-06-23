@@ -13,9 +13,9 @@ jobs:
     # gate merges.  JDK 8 itself is NOT added to the matrix because our
     # source level is Java 11 (records + sealed-types comments disallowed
     # by CONTRIBUTING.md); the FTC SDK plugin's Java-8 runtime
-    # compatibility is enforced at byte code level via targetCompatibility
+    # compatibility is enforced at byte-code level via targetCompatibility
     # in build.gradle.
-    name: Compile + unit tests (JDK \${{ matrix.java }})
+    name: Compile + unit tests (JDK ${{ matrix.java }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -26,8 +26,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Cache key now includes `jdk\${{ matrix.java }}` so per-JDK caches
-      # don't bleed into each other.
+      # Cache key includes `jdk${{ matrix.java }}` so per-JDK caches don't
+      # bleed into each other; restore-keys fall back to a generic
+      # runner.os-only key on a true cold cache.
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -35,16 +36,16 @@ jobs:
             .gradle
             ~/.gradle/caches
             ~/.gradle/wrapper/dists
-          key: \${{ runner.os }}-jdk\${{ matrix.java }}-gradle-\${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle', 'settings.gradle', 'gradle.properties') }}
+          key: ${{ runner.os }}-jdk${{ matrix.java }}-gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle', 'settings.gradle', 'gradle.properties') }}
           restore-keys: |
-            \${{ runner.os }}-jdk\${{ matrix.java }}-gradle-
-            \${{ runner.os }}-gradle-
+            ${{ runner.os }}-jdk${{ matrix.java }}-gradle-
+            ${{ runner.os }}-gradle-
 
-      - name: Set up JDK \${{ matrix.java }}
+      - name: Set up JDK ${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: \${{ matrix.java }}
+          java-version: ${{ matrix.java }}
 
       - name: Compile library + FTC stub interfaces + tests
         run: |
