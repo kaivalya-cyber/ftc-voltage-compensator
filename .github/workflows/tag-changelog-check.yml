@@ -21,13 +21,14 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # need all tags
+          fetch-tags: true
 
       - name: Verify CHANGELOG entries match git tags
         run: |
           set -euo pipefail
 
           # Extract all [vX.Y.Z] entries from CHANGELOG.md
-          CHANGELOG_TAGS=$(grep -oP '^\Q## [\E(v\d+\.\d+\.\d+)\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
+          CHANGELOG_TAGS=$(grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
 
           # Get all git tags matching vX.Y.Z
           GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
