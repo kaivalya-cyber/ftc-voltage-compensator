@@ -20,6 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Fetch all tags (explicit refspec)
+        run: git fetch --force origin '+refs/tags/*:refs/tags/*'
+
       - name: Verify CHANGELOG entries match git tags
         run: |
           set -euo pipefail
@@ -27,8 +30,8 @@ jobs:
           # Extract all [vX.Y.Z] entries from CHANGELOG.md
           CHANGELOG_TAGS=$(grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
 
-          # Query remote directly (bypasses local checkout tag-fetching quirks)
-          GIT_TAGS=$(git ls-remote --tags origin 'refs/tags/v*.*.*' | awk -F/ '{print $NF}' | sed 's/\^{}//' | sort -Vu)
+          # Get all git tags matching vX.Y.Z
+          GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
 
           # Tags in CHANGELOG but not in git
           MISSING_TAGS=$(comm -23 <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") || true)
