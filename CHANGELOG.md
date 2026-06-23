@@ -7,6 +7,17 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.28.0] - 2026-06-22
+
+### Added
+- `CHANGELOG.md` entry for v500.27.0 (documenting v500.26.0 entry
+  addition).
+- Local tag-changelog consistency check confirmed 34/34 match.
+
+### Changed
+- `[Unreleased]` comparison base advanced from `v500.27.0` to
+  `v500.28.0`.
+
 ## [v500.27.0] - 2026-06-22
 
 ### Added
@@ -450,7 +461,8 @@ stay one major-version ahead of any specific FTC SDK binding.
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
      comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.27.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.28.0...HEAD
+[v500.28.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.27.0...v500.28.0
 [v500.27.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.26.0...v500.27.0
 [v500.26.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.25.0...v500.26.0
 [v500.25.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.24.0...v500.25.0
