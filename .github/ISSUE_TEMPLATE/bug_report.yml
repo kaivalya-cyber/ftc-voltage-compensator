@@ -1,0 +1,91 @@
+name: Bug Report
+description: Report a defect in ftc-voltage-compensator
+title: "[Bug] "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filing a bug.  Filling in the template below helps
+        maintainers reproduce and fix the issue.  Issues that don't match
+        this template may be closed with a "please re-file" request.
+
+  - type: input
+    id: version
+    attributes:
+      label: VoltageCompensator version
+      description: "Tag or commit hash you're running against."
+      placeholder: v500.x.x
+    validations:
+      required: true
+
+  - type: dropdown
+    id: severity
+    attributes:
+      label: Severity
+      options:
+        - Critical (robot brownouts / wrong behavior at match time)
+        - High (incorrect behavior under some specific inputs)
+        - Medium (cosmetic / documentation)
+        - Low (test failure or minor inconvenience)
+    validations:
+      required: true
+
+  - type: input
+    id: jdk
+    attributes:
+      label: JDK + runtime environment
+      placeholder: "JDK 17 / Android Studio ... / FTC SDK ..."
+    validations:
+      required: false
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      placeholder: |
+        A clear and concise description of what went wrong.
+        Include observed vs expected behavior.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. set NominalVoltage=X
+        2. call compensator.update(...)
+        3. observe ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      placeholder: |
+        What you'd ideally see, including any math / telemetry you
+        expect the compensator to produce.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs / telemetry
+      placeholder: |
+        Telemetry lines from the FTC Driver Station, or raw voltage
+        readings if you have them.
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Anything else?
+      description: "FTC team context (rookie / veteran / specific robot), screenshots, related issues, etc."
+    validations:
+      required: false

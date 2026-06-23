@@ -57,8 +57,11 @@ under `test/` so the unit-test invocation still works.
 
 ## Coding style
 
-- Java 11 source level (no records, sealed types, etc. \u2014 the FTC SDK
-  targets 8/11).
+- Java 11 source level works in CI, but the FTC SDK plugin runs at
+  Java 8 at runtime.  Avoid Java 11+ syntax (records, sealed types,
+  pattern matching) so production code is still consumable by an FTC
+  robot Android project.  Sticking strictly to Java 8 source features
+  is the safer rule for code destined to ship onto a robot.
 - One public class per file.
 - Constants grouped at the top with `// \u2500\u2500 Section header \u2500\u2500` comments.
 - Public methods have a Javadoc; private helpers may omit it.
@@ -67,15 +70,23 @@ under `test/` so the unit-test invocation still works.
 
 ## Pull requests
 
-1. **One change per PR.**  Mixing refactors with new features makes review
+1. Push your branch to your fork on GitHub, then open a PR targeting
+   `kaivalya-cyber/ftc-voltage-compensator:main`:
+   ```sh
+   git checkout -b my-change
+   git commit -m "fix: ..."
+   git push -u origin my-change
+   # Open the PR via the GitHub UI on your fork's branch.
+   ```
+2. **One change per PR.**  Mixing refactors with new features makes review
    and rerolls harder.
-2. Run `./runtests.sh` **and** `./gradlew runUnitTests` locally before
+3. Run `./runtests.sh` **and** `./gradlew runUnitTests` locally before
    opening the PR \u2014 both must report `Passed: 40`.
-3. Reference any open issue with `Fixes #N` notation.
-4. Add an entry to `CHANGELOG.md` under the next `[Unreleased]` heading
+4. Reference any open issue with `Fixes #N` notation.
+5. Add an entry to `CHANGELOG.md` under the next `[Unreleased]` heading
    (or under a tightly-scoped `[vX.Y.Z] - YYYY-MM-DD` if you tag the
    release yourself).
-5. Don't introduce external dependencies (no Maven Central jars, no
+6. Don't introduce external dependencies (no Maven Central jars, no
    Android Gradle plugin, no Maven, no Gradle wrapper-shaking).  The
    library must remain drop-in for any FTC project.
 
@@ -87,9 +98,10 @@ under `test/` so the unit-test invocation still works.
 - Don't rewrite the compensation math without a working test demonstrating
   the new behaviour.  Adding a `testXxx()` method to
   `VoltageCompensatorTest` is the easiest way.
-- Don't change public API.  Once a release tag is published, treat
-  `VoltageCompensator`'s public method signatures as stable.  Add new
-  methods rather than mutating existing ones.
+- **Don't break the public API casually.**  Prefer additive changes and
+  `@Deprecated` annotations over breaking changes.  Any breaking
+  change requires a major-version bump (`vX.0.0`) AND a `### Removed`
+  / `### Changed (BREAKING)` section in `CHANGELOG.md`.
 - **Don't introduce a test framework (JUnit, TestNG, JUnit Jupiter,
   etc.).**  Keep the in-source `VoltageCompensatorTest.main()` harness
   so the suite runs with nothing more than a JDK.  New contributors

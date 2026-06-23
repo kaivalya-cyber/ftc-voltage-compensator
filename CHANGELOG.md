@@ -7,6 +7,23 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.2.0] - 2026-06-23
+
+### Added
+- `CHANGELOG.md` (this file) \u2014 release history in Keep-a-Changelog v1.1.0
+  style with Security / Changed / Added / Removed sections.
+- `CONTRIBUTING.md` \u2014 FTC-team guide covering clone-and-test, stub
+  interface conventions (mirror only what production sources call),
+  coding style (Java 11 source \u2192 Java 8 SDK runtime), PR process
+  including fork-then-push flow, and explicit "no test framework / no
+  external dependencies" rules.
+
+### Changed
+- `.github/workflows/build.yml` cache path now includes
+  `~/.gradle/wrapper/dists` so cold-runner wrapper extraction (~30-60 s
+  on a fully virgin runner) is also cached.  Key composition already
+  includes `gradle.properties` so config-cache toggles invalidate.
+
 ## [v500.1.0] - 2026-06-23
 
 ### Security
@@ -48,6 +65,10 @@ stay one major-version ahead of any specific FTC SDK binding.
 - README with usage examples, tunable constants, tests section, build
   options, and FTC Android Studio wiring instructions.
 
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.1.0...HEAD
+<!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
+     comparison base below to the new tag (e.g. v500.3.0) and add a link
+     reference for it. -->
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.2.0...HEAD
+[v500.2.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.1.0...v500.2.0
 [v500.1.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.0.0...v500.1.0
 [v500.0.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/releases/tag/v500.0.0

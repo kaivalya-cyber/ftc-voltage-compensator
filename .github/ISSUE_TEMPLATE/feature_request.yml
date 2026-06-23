@@ -1,0 +1,64 @@
+name: Feature Request
+description: Suggest a new feature for ftc-voltage-compensator
+title: "[Feature] "
+labels: ["enhancement"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this template to propose a new public method on
+        `VoltageCompensator`, a new tunable constant, or a larger
+        behavior change.  Maintainers will triage and schedule.
+
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+      placeholder: |
+        One sentence: "VoltageCompensator should expose a `getRollingAverage()` method so the driver station can show live smoothing."
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivation / use case
+      placeholder: |
+        WHY is this needed?  What FTC-team problem does it solve?
+        Are there workarounds today, and if so how clean are they?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-api
+    attributes:
+      label: Proposed API (if applicable)
+      placeholder: |
+        Show the public method signature or constants block as you'd
+        like to see it.  Avoid proposing private/internal changes \u2014
+        those don't need an issue, just send a PR.
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      placeholder: |
+        What else did you consider?  Default to additive changes
+        (new methods, new constants) rather than modifications to
+        existing behavior.
+    validations:
+      required: false
+
+  - type: textarea
+    id: impact
+    attributes:
+      label: Backwards compatibility
+      placeholder: |
+        Does this break existing behavior?  Would it need to bump the
+        major version (`vX.0.0`)?  If yes, prefer rescoping.
+    validations:
+      required: false
