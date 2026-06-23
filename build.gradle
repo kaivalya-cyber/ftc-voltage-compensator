@@ -1,15 +1,19 @@
 // build.gradle — Optional Gradle wrapper for ftc-voltage-compensator.
 //
-// This file is purely additive; the lightweight ./runtests.sh script and
-// the GitHub Actions workflow continue to work without it.  No Gradle
-// wrapper jar is bundled here — install Gradle (7.0+) if you want to use
-// these tasks.
+// This file is purely additive; the lightweight ./runtests.sh script
+// and the GitHub Actions workflow keep working without it.  Requires
+// Gradle 7.0+.  No `gradlew` wrapper is bundled — install Gradle if
+// you want to use these tasks.
 //
-// Two goals:
-//   1. Compile the production .java files at the repo root plus the
-//      stub + unit-test sources under test/, using a Java 11 toolchain.
-//   2. Provide a `gradle runUnitTests` task that builds and executes the
-//      VoltageCompensator unit tests via the public main() entry point.
+// Three source sets:
+//   stubs  — Compile-only copies of the FTC SDK interfaces (VoltageSensor,
+//            Range, Telemetry, OpMode, LinearOpMode, TeleOp, DcMotor,
+//            Servo, HardwareMap, Gamepad) under test/.  No test classes
+//            live here.
+//   main   — Production sources at the repo root (VoltageCompensator.java
+//            and VoltageCompensatedTeleOp.java).
+//   test   — VoltageCompensatorTest.java under test/, plus the stubs
+//            joined at runtime via the stubs source-set output.
 //
 // Wiring these source files into a real FTC Android Studio project:
 //
@@ -35,39 +39,53 @@ repositories {
 }
 
 sourceSets {
+    // (1) stubs — only the FTC SDK interface stubs under test/, no test classes.
+    stubs {
+        java {
+            srcDirs = ['test']
+            exclude '**/*Test.java'
+        }
+    }
+
+    // (2) main — production sources at the repo root.  Resolves its FTC SDK
+    // imports against the stubs source set above.
     main {
         java {
-            // Production sources live at the repo root, in their canonical
-            // FTC SDK packages.
             srcDirs = ['.']
             include 'VoltageCompensator.java',
                     'VoltageCompensatedTeleOp.java'
-            exclude 'test/**', 'build/**', '.gradle/**'
         }
+        compileClasspath += sourceSets.stubs.output
     }
+
+    // (3) test — VoltageCompensatorTest plus the same stubs at compile time
+    // AND at run time.
     test {
         java {
-            // Stub FTC SDK interfaces + unit tests all live under test/.
             srcDirs = ['test']
+            include '**/*Test.java'
         }
+        compileClasspath  += sourceSets.stubs.output
+        runtimeClasspath += sourceSets.stubs.output
     }
 }
 
 // The auto-wired `test` task added by `java-library` expects JUnit on the
 // classpath.  We don't depend on JUnit because VoltageCompensatorTest uses
-// a plain main() entry point (see runUnitTests below).  Disable the auto-
-// wired `test` task so `gradle build` and `gradle assemble` keep working.
+// a plain main() entry point.  Disable `test` so `gradle build` and
+// `gradle assemble` keep working; use `runUnitTests` (below) for tests.
 tasks.named('test') { enabled = false }
 
 tasks.register('runUnitTests', JavaExec) {
-    description = 'Compile and run the VoltageCompensator unit tests.'
-    group       = 'verification'
-    dependsOn   'classes', 'testClasses'
-    classpath   = files(
-        sourceSets.test.runtimeClasspath,
-        sourceSets.main.runtimeClasspath
+    description   = 'Compile and run the VoltageCompensator unit tests.'
+    group         = 'verification'
+    dependsOn     'stubsClasses', 'classes', 'testClasses'
+    classpath     = files(
+        sourceSets.stubs.runtimeClasspath,
+        sourceSets.main.runtimeClasspath,
+        sourceSets.test.runtimeClasspath
     )
-    mainClass    = 'org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest'
-    standardInput = System.in
+    mainClass      = 'org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest'
+    standardInput  = System.in
     ignoreExitValue = false
 }
