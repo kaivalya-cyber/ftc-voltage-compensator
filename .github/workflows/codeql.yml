@@ -23,9 +23,14 @@ on:
     - cron: '17 6 * * 1'
 
 # Minimum GITHUB_TOKEN permissions for SARIF upload to the Security tab.
+# `actions: read` lets the action resolve workflow run metadata; without
+# it the SARIF upload can fail with "Resource not accessible" on private
+# organisations.  Public repos don't strictly need it but it's harmless
+# and future-proof.
 permissions:
-  security-events: write
+  actions: read
   contents: read
+  security-events: write
 
 jobs:
   analyze:

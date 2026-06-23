@@ -8,34 +8,26 @@ on:
 
 jobs:
   build:
-    name: Compile + unit tests (JDK 17)
+    # Multi-LTS matrix: JDK 17 (the development default) and JDK 11 (the
+    # last LTS before 17).  Both must compile and run the unit suite to
+    # gate merges.  JDK 8 itself is NOT added to the matrix because our
+    # source level is Java 11 (records + sealed-types comments disallowed
+    # by CONTRIBUTING.md); the FTC SDK plugin's Java-8 runtime
+    # compatibility is enforced at byte code level via targetCompatibility
+    # in build.gradle.
+    name: Compile + unit tests (JDK \${{ matrix.java }})
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        java: ['17', '11']
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Persist Gradle configuration cache and downloaded artifacts across CI
-      # runs so JDK setup and configuration phase are near-zero cost on cache
-      # hit.  Key auto-invalidates when wrapper / build files change.
-      - name: Cache Gradle
-        uses: actions/cache@v4
-        with:
-          path: |
-            .gradle
-            ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle', 'settings.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      # Persist Gradle configuration cache, downloaded artifacts, AND the
-      # extracted wrapper distribution across CI runs so JDK setup,
-      # configuration phase, and fresh-runner extraction are all near-
-      # zero cost on cache hit.  The ~/.gradle/wrapper/dists path entry
-      # covers the SHA-verified wrapper extraction (~30-60 s on a fully
-      # virgin runner), so cold-runs no longer pay this on the second
-      # build onward.  Key includes gradle.properties so toggling the
-      # org.gradle.configuration-cache property invalidates the cache.
+      # Cache key now includes `jdk\${{ matrix.java }}` so per-JDK caches
+      # don't bleed into each other.
       - name: Cache Gradle
         uses: actions/cache@v4
         with:
@@ -43,15 +35,16 @@ jobs:
             .gradle
             ~/.gradle/caches
             ~/.gradle/wrapper/dists
-          key: ${{ runner.os }}-gradle-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle', 'settings.gradle', 'gradle.properties') }}
+          key: \${{ runner.os }}-jdk\${{ matrix.java }}-gradle-\${{ hashFiles('gradle/wrapper/gradle-wrapper.properties', 'build.gradle', 'settings.gradle', 'gradle.properties') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            \${{ runner.os }}-jdk\${{ matrix.java }}-gradle-
+            \${{ runner.os }}-gradle-
 
-      - name: Set up JDK 17
+      - name: Set up JDK \${{ matrix.java }}
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '17'
+          java-version: \${{ matrix.java }}
 
       - name: Compile library + FTC stub interfaces + tests
         run: |
