@@ -186,12 +186,35 @@ jobs:
               }
             }
 
-            if (drifted === 0) {
+            if (drifted === 0 && dockerActions.size === 0) {
               console.log('No action-drift detected.');
               return;
             }
 
-            const title = 'Weekly action-drift report \u2014 ' + drifted + ' pin(s) behind upstream';
+            // Compose a title that reflects what was actually found, so
+            // a docker-only run does not produce a misleading '0 pin(s)
+            // behind upstream' title.
+            let title;
+            if (drifted > 0 && dockerActions.size > 0) {
+              title = 'Weekly action-drift report \u2014 ' + drifted
+                    + ' pin(s) behind upstream, '
+                    + dockerActions.size + ' Docker action(s) tracked';
+            } else if (drifted > 0) {
+              title = 'Weekly action-drift report \u2014 ' + drifted
+                    + ' pin(s) behind upstream';
+            } else {
+              title = 'Weekly Docker-action report \u2014 '
+                    + dockerActions.size + ' container action(s) in use';
+            }
+
+            const dockerSection = (dockerActions.size === 0 ? [] : [
+              '',
+              '## Docker container actions (registry-level only; drift detection skipped)',
+              '',
+              ...Array.from(dockerActions).sort().map(d => '- `' + d + '`'),
+              '',
+            ]);
+
             const body = [
               'The `action-drift` workflow detected the following GitHub Actions',
               'still pinned behind the upstream latest tag within the same major',
@@ -201,7 +224,7 @@ jobs:
               '## Drifted pins',
               '',
               ...lines,
-              '',
+              ...dockerSection,
               '## Why we are not using Dependabot',
               '',
               'See `SECURITY.md` for the rationale; in short, the project',

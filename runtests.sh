@@ -18,9 +18,16 @@ if [ -z "$SOURCES" ]; then
     exit 1
 fi
 
+# POSIX-portable word-split that survives whitespace in clone paths.
+# `$SOURCES` is unquoted at IFS expansion (split on space/tab/newline),
+# then re-assembled into positional parameters $1..$N via `set --`
+# and forwarded to javac via "$@" with each argument individually
+# quoted, so a path like `~/Team Code/.../VoltageCompensator.java`
+# stays a single javac argument.
+set -- $SOURCES
 javac -d build \
   -Xlint:all \
-  $SOURCES
+  "$@"
 
 echo "Compilation OK."
 echo
