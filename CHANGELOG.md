@@ -503,9 +503,10 @@ stay one major-version ahead of any specific FTC SDK binding.
 - README with usage examples, tunable constants, tests section, build
   options, and FTC Android Studio wiring instructions.
 
-<!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
-     comparison base below to the new tag (e.g. v500.14.0) and add a link
-     reference for it. -->
+<!-- EVERY MAINTAINER: when tagging a new release, write the CHANGELOG
+     entry, advance the [Unreleased] comparison base below, and add the
+     link reference all in the SAME commit that receives the release tag.
+     Do NOT create separate "add CHANGELOG entry" tags (see CONTRIBUTING.md). -->
 [Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.35.0...HEAD
 [v500.35.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.34.0...v500.35.0
 [v500.34.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.33.0...v500.34.0
