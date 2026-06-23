@@ -13,7 +13,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       # Persist Gradle configuration cache and downloaded artifacts across CI
       # runs so JDK setup and configuration phase are near-zero cost on cache
