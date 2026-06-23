@@ -1,3 +1,13 @@
+# Dependabot config \u2014 weekly bumps of GitHub Actions only.
+#
+# The Gradle wrapper distribution itself (gradle-wrapper.properties) is
+# NOT covered by Dependabot's `gradle` ecosystem; bump it manually with
+# `gradle wrapper --gradle-version=X.Y.Z && shasum -a 256
+# gradle/wrapper/gradle-wrapper.properties`.
+#
+# Likewise the `gradle` ecosystem only tracks declared dependencies in
+# build.gradle / settings.gradle, which this repo has none of.  We
+# intentionally keep this file minimal.
 version: 2
 updates:
   - package-ecosystem: "github-actions"
@@ -5,14 +15,3 @@ updates:
     schedule:
       interval: "weekly"
       day: "monday"
-    groups:
-      github-actions:
-        patterns: ["*"]
-  - package-ecosystem: "gradle"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    groups:
-      gradle:
-        patterns: ["*"]
