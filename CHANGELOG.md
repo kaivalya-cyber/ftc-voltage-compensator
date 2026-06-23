@@ -9,7 +9,7 @@ stay one major-version ahead of any specific FTC SDK binding.
 
 ## [v500.17.0] - 2026-06-22
 
-### Fixed
+### Changed
 - `.github/workflows/tag-changelog-check.yml`: switched `grep -oP`
   to `grep -oE` with `[0-9]+` for cross-platform compatibility;
   added explicit `fetch-tags: true` to the checkout step.

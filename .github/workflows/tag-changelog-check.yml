@@ -19,11 +19,6 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Fetch all tags explicitly
-        run: git fetch --tags origin
 
       - name: Verify CHANGELOG entries match git tags
         run: |
@@ -32,8 +27,8 @@ jobs:
           # Extract all [vX.Y.Z] entries from CHANGELOG.md
           CHANGELOG_TAGS=$(grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
 
-          # Get all git tags matching vX.Y.Z
-          GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
+          # Query remote directly (bypasses local checkout tag-fetching quirks)
+          GIT_TAGS=$(git ls-remote --tags origin 'refs/tags/v*.*.*' | awk -F/ '{print $NF}' | sed 's/\^{}//' | sort -Vu)
 
           # Tags in CHANGELOG but not in git
           MISSING_TAGS=$(comm -23 <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") || true)
