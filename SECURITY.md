@@ -60,10 +60,9 @@ unless they prefer to stay anonymous.
 * CodeQL's `java` analysis runs on every push, every pull request, and
   weekly as a tripwire.  SARIF findings surface on the Security tab.
 * All third-party GitHub Actions are referenced by major-version
-  tags (`@v4`, `@v3`) and reviewed/bumped manually in the workflow files
-  on a quarterly cadence, since we deliberately do not run Dependabot
-  on the repo (its scheduled check was binding every commit to a failure
-  state during the v500.4.0 release pipeline).
+  tags (`@v4`, `@v3`); no in-repo `.github/dependabot.yml` is shipped,
+  and GitHub Actions versions are reviewed and bumped manually in the
+  workflow files on a quarterly cadence.
 * The Gradle wrapper distribution (`gradle-9.6.0-bin.zip`) is pinned by
   SHA-256 in `gradle/wrapper/gradle-wrapper.properties`; any tampering
   fails the wrapper at first run.
