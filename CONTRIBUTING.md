@@ -20,6 +20,11 @@ cd ftc-voltage-compensator
 
 Tests must end with `Tests: 40   Passed: 40   Failed: 0`.
 
+Before tuning `VoltageCompensator` for your robot, read
+[ARCHITECTURE.md](ARCHITECTURE.md) for the state-machine diagrams,
+the per-loop interaction sequence, and the constants table with
+rationale.
+
 ## Project layout
 
 ```

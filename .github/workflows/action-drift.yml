@@ -1,0 +1,135 @@
+name: action-drift
+
+# Weekly detection of third-party GitHub Actions pins that are behind
+# upstream's latest release within the same major version.  Unlike
+# `.github/dependabot.yml` (which creates a check attached to every
+# commit), this runs on its own cron/week and reports drift passively:
+# it never gates a push.
+#
+# Workflow_dispatch is included for ad-hoc audits ("did I forget to
+# bump?") without waiting for the weekly run.
+
+on:
+  schedule:
+    # Weekly Monday 06:17 UTC.  Avoids the 06:00 UTC CodeQL stamp.
+    - cron: '17 6 * * 1'
+  workflow_dispatch:
+
+# Issues: write so we can open the drift-report issue.
+# Contents: read to checkout the repo (though workflow_dispatch is the
+# only path that needs the actual files; the cron path could skip the
+# checkout if we wanted, but keeping it for parity).
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  detect-drift:
+    name: Detect third-party GitHub Actions pin drift
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    concurrency:
+      group: action-drift-${{ github.ref }}
+      cancel-in-progress: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect drift + (re)open tracking issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Hard-coded list of every third-party action we reference, paired
+            // with the upstream repo to query.  Adding a new third-party action
+            // to ANY workflow file means adding an entry here.
+            const actions = [
+              { uses: 'actions/checkout@v4',             upstream: 'actions/checkout' },
+              { uses: 'actions/setup-java@v4',           upstream: 'actions/setup-java' },
+              { uses: 'actions/cache@v4',                upstream: 'actions/cache' },
+              { uses: 'github/codeql-action/init@v3',    upstream: 'github/codeql-action' },
+              { uses: 'github/codeql-action/analyze@v3', upstream: 'github/codeql-action' },
+            ];
+
+            const lines = [];
+            let drifted = 0;
+
+            for (const a of actions) {
+              const [, currentRef] = a.uses.split('@');
+              const [owner, repo] = a.upstream.split('/');
+              try {
+                const tags = await github.paginate(
+                  github.rest.repos.listTags,
+                  { owner, repo, per_page: 30 }
+                );
+                const major = currentRef.replace(/^v/i, '').split('.')[0];
+                const majorTags = tags
+                  .map(t => t.name)
+                  .filter(name => new RegExp(`^v?${major}\\.`).test(name));
+                const upstreamLatest = majorTags[0] || '(none found)';
+                const upToDate = upstreamLatest === currentRef;
+                lines.push(
+                  '- `' + a.uses + '` '
+                  + (upToDate ? '\u2713 up to date' : '\u2717 upstream latest: `' + upstreamLatest + '`')
+                );
+                if (!upToDate) drifted++;
+              } catch (e) {
+                lines.push('- `' + a.uses + '` \u26a0 API error: ' + e.message);
+              }
+            }
+
+            if (drifted === 0) {
+              console.log('No action-drift detected.');
+              return;
+            }
+
+            const title = 'Weekly action-drift report \u2014 ' + drifted + ' pin(s) behind upstream';
+            const body = [
+              'The `action-drift` workflow detected the following GitHub Actions',
+              'still pinned behind the upstream latest tag within the same major',
+              'version.  Bump the `@vN` portion of `uses:` in the relevant',
+              'workflow file to the upstream latest and re-run CI.',
+              '',
+              '## Drifted pins',
+              '',
+              ...lines,
+              '',
+              '## Why we are not using Dependabot',
+              '',
+              'See `SECURITY.md` for the rationale; in short, the project',
+              'intentionally ships no `.github/dependabot.yml` so the',
+              'release pipeline is never gated on a Dependabot check that',
+              'fails consistently.  This weekly issue is the manual',
+              'replacement for that lossless auto-bump story.',
+              '',
+              '> This issue is auto-generated; close it after bumping.',
+            ].join('\n');
+
+            const issues = await github.paginate(
+              github.rest.issues.listForRepo,
+              {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                labels: 'dependencies-drift',
+              }
+            );
+            const existing = issues.find(i => i.title === title);
+            if (existing) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+              console.log('Updated existing issue #' + existing.number);
+            } else {
+              const created = await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+                labels: ['dependencies-drift'],
+              });
+              console.log('Created new issue #' + created.data.number);
+            }
