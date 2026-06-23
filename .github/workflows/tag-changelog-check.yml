@@ -1,0 +1,55 @@
+name: Tag ↔ Changelog check
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tag-changelog-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # need all tags
+
+      - name: Verify CHANGELOG entries match git tags
+        run: |
+          set -euo pipefail
+
+          # Extract all [vX.Y.Z] entries from CHANGELOG.md
+          CHANGELOG_TAGS=$(grep -oP '^\Q## [\E(v\d+\.\d+\.\d+)\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
+
+          # Get all git tags matching vX.Y.Z
+          GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
+
+          # Tags in CHANGELOG but not in git
+          MISSING_TAGS=$(comm -23 <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") || true)
+          # Tags in git but not in CHANGELOG
+          EXTRA_TAGS=$(comm -13 <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") || true)
+
+          if [ -n "$MISSING_TAGS" ]; then
+            echo "❌ CHANGELOG entries with no git tag:"
+            echo "$MISSING_TAGS"
+          fi
+          if [ -n "$EXTRA_TAGS" ]; then
+            echo "❌ Git tags with no CHANGELOG entry:"
+            echo "$EXTRA_TAGS"
+          fi
+
+          if [ -z "$MISSING_TAGS" ] && [ -z "$EXTRA_TAGS" ]; then
+            echo "✅ All $(echo "$CHANGELOG_TAGS" | wc -l) CHANGELOG entries match git tags one-for-one."
+          else
+            echo ""
+            echo "Fix: tag missing commits, or add missing CHANGELOG entries."
+            exit 1
+          fi

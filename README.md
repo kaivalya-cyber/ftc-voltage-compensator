@@ -4,6 +4,13 @@
 [![Build & Test](https://github.com/kaivalya-cyber/ftc-voltage-compensator/actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
 [![Java 11+](https://img.shields.io/badge/Java-11%2B-blue.svg)]()
 
+## Documentation
+
+- **[ARCHITECTURE.md](ARCHITECTURE.md)** — state-machine diagrams, per-loop sequence, constants rationale, tuning recipe
+- **[CHANGELOG.md](CHANGELOG.md)** — release history in Keep-a-Changelog format
+- **[SECURITY.md](SECURITY.md)** — supported versions, vulnerability reporting, hardening guarantees
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — how to add stubs, coding style, PR process
+
 An adaptive battery-voltage compensation system for FTC TeleOp periodic loops. It scales motor and servo outputs in real time so the robot behaves consistently as the 12V lead-acid battery sags during a match, and gracefully limits power when a brownout is imminent.
 
 ## What it does
