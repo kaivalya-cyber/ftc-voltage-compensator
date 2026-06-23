@@ -1,0 +1,37 @@
+name: build & test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Compile + unit tests (JDK 17)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: 'none'
+
+      - name: Compile library + FTC stub interfaces + tests
+        run: |
+          mkdir -p build
+          javac -d build \
+            -Xlint:all \
+            VoltageCompensator.java \
+            test/com/qualcomm/robotcore/hardware/VoltageSensor.java \
+            test/com/qualcomm/robotcore/util/Range.java \
+            test/org/firstinspires/ftc/robotcore/external/Telemetry.java \
+            test/org/firstinspires/ftc/teamcode/util/VoltageCompensatorTest.java
+
+      - name: Run VoltageCompensator unit tests
+        run: java -ea -cp build org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest

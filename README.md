@@ -1,5 +1,9 @@
 # FTC Voltage Compensator
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Build & Test](https://github.com/kaivalya-cyber/ftc-voltage-compensator/actions/workflows/build.yml/badge.svg)](../../actions/workflows/build.yml)
+[![Java 11+](https://img.shields.io/badge/Java-11%2B-blue.svg)]()
+
 An adaptive battery-voltage compensation system for FTC TeleOp periodic loops. It scales motor and servo outputs in real time so the robot behaves consistently as the 12V lead-acid battery sags during a match, and gracefully limits power when a brownout is imminent.
 
 ## What it does
@@ -57,3 +61,32 @@ All tuning constants live at the top of `VoltageCompensator.java`:
 - This library only handles **voltage** compensation. Temperature, encoder drift, and PID tuning are out of scope.
 - Position servos (e.g. a claw) should not be passed through `compensateServo` — they regulate position internally and external scaling causes jitter.
 - Designed for the FTC SDK's `LinearOpMode` and the standard Control Hub voltage sensor (`hardwareMap.voltageSensor`).
+
+## Tests
+
+A standalone unit-test suite lives under [`test/`](test/). It uses tiny stub interfaces that mirror the FTC SDK `VoltageSensor`, `Range`, and `Telemetry` types, so the whole suite compiles and runs with nothing more than a JDK — no Gradle, no FTC SDK download.
+
+Run locally:
+
+```sh
+./runtests.sh
+```
+
+Or step-by-step (any JDK 11+):
+
+```sh
+mkdir -p build && javac -d build \
+  VoltageCompensator.java \
+  test/com/qualcomm/robotcore/hardware/VoltageSensor.java \
+  test/com/qualcomm/robotcore/util/Range.java \
+  test/com/qualcomm/robotcore/external/Telemetry.java \
+  test/org/firstinspires/ftc/teamcode/util/VoltageCompensatorTest.java
+
+java -ea -cp build org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest
+```
+
+CI runs the same flow on every push and pull request — see [`.github/workflows/build.yml`](.github/workflows/build.yml).
+
+## License
+
+[MIT](LICENSE).
