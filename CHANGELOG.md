@@ -7,6 +7,34 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.17.0] - 2026-06-22
+
+### Fixed
+- `.github/workflows/tag-changelog-check.yml`: switched `grep -oP`
+  to `grep -oE` with `[0-9]+` for cross-platform compatibility;
+  added explicit `fetch-tags: true` to the checkout step.
+
+## [v500.16.0] - 2026-06-22
+
+### Added
+- `README.md` "Documentation" section linking to
+  `ARCHITECTURE.md`, `CHANGELOG.md`, `SECURITY.md`,
+  `CONTRIBUTING.md`.
+- `.github/workflows/tag-changelog-check.yml` (NEW): CI check that
+  verifies every `[vX.Y.Z]` CHANGELOG entry has a matching git tag
+  and vice versa, failing the build if any are missing.
+
+## [v500.15.0] - 2026-06-22
+
+### Added
+- `CHANGELOG.md` entry for v500.14.0 (consistency fixes).
+
+### Changed
+- `CHANGELOG.md` maintenance HTML comment example tag updated from
+  `v500.9.0` to `v500.14.0`.
+- `[Unreleased]` comparison base advanced from `v500.13.1` to
+  `v500.14.0`.
+
 ## [v500.14.0] - 2026-06-22
 
 ### Fixed
@@ -324,7 +352,10 @@ stay one major-version ahead of any specific FTC SDK binding.
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
      comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.14.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.17.0...HEAD
+[v500.17.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.16.0...v500.17.0
+[v500.16.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.15.0...v500.16.0
+[v500.15.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.14.0...v500.15.0
 [v500.14.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.13.1...v500.14.0
 [v500.13.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.13.0...v500.13.1
 [v500.13.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.12.0...v500.13.0

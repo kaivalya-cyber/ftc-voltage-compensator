@@ -20,8 +20,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # need all tags
-          fetch-tags: true
+          fetch-depth: 0
+
+      - name: Fetch all tags explicitly
+        run: git fetch --tags origin
 
       - name: Verify CHANGELOG entries match git tags
         run: |
