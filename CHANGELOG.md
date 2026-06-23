@@ -7,6 +7,19 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.14.0] - 2026-06-22
+
+### Fixed
+- `CHANGELOG.md` consistency: removed duplicate back-tagging bullet
+  from the v500.10.0 entry (it already appeared in v500.11.0).
+- `CHANGELOG.md` missing entries: added v500.13.0 (SECURITY
+  Patched-through tightened) and v500.13.1 (SECURITY maintainer
+  comment clarified).
+
+### Changed
+- `[Unreleased]` comparison base advanced from `v500.12.0` to
+  `v500.13.1`.
+
 ## [v500.13.1] - 2026-06-22
 
 ### Changed
@@ -309,9 +322,10 @@ stay one major-version ahead of any specific FTC SDK binding.
   options, and FTC Android Studio wiring instructions.
 
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
-     comparison base below to the new tag (e.g. v500.9.0) and add a link
+     comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.13.1...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.14.0...HEAD
+[v500.14.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.13.1...v500.14.0
 [v500.13.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.13.0...v500.13.1
 [v500.13.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.12.0...v500.13.0
 [v500.12.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.11.0...v500.12.0
