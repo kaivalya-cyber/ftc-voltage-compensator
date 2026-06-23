@@ -62,11 +62,9 @@ unless they prefer to stay anonymous.
 * All third-party GitHub Actions are referenced by major-version
   tags (`@v4`, `@v3`); no in-repo `.github/dependabot.yml` is shipped,
   and GitHub Actions versions are reviewed and bumped manually in the
-  workflow files at each `v500.x` release.  Accepted trade-off for this
-  FTC-scale cadence: major-version pins auto-absorb upstream patches
-  and security fixes; exposure to breaking changes within a major
-  version is mitigated by the per-release review at every `v500.x`
-  cut.
+  workflow files at each `v500.x` release.  Major-version pins
+  auto-absorb upstream patches and security fixes; any breaking
+  change within a major version is caught at the per-bump review.
 * The Gradle wrapper distribution (`gradle-9.6.0-bin.zip`) is pinned by
   SHA-256 in `gradle/wrapper/gradle-wrapper.properties`; any tampering
   fails the wrapper at first run.
