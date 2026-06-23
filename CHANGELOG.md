@@ -7,6 +7,39 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.10.0] - 2026-06-22
+
+### Changed
+- `CHANGELOG.md`: all 13 entry dates corrected from guessed
+  2026-06-23/06-24 to the real commit date 2026-06-22.
+- `CONTRIBUTING.md`: action-drift bullet under "What NOT to do"
+  reworded to lead with the prohibition ("Don't add a new `@vN`-pinned
+  `uses:` reference without expecting the `action-drift` workflow to
+  flag it") instead of the softer reminder ("Don't forget").
+- `SECURITY.md`: supported-versions table back-filled with the
+  actual latest tag (`v500.4.0`) instead of the generic
+  `v500.x.x` placeholder; a maintainer bump comment added.
+- 14 previously-missing git tags back-filled (`v500.0.0`–`v500.3.0`,
+  `v500.4.1`–`v500.9.0`) so GitHub compare URLs resolve.
+
+## [v500.9.0] - 2026-06-22
+
+### Added
+- `CHANGELOG.md`: entries back-filled for v500.3.0 through
+  v500.8.1 (11 releases) so the changelog is in lockstep with the
+  tag list.  `[Unreleased]` compare base advanced, 11 link
+  references added.
+- `CONTRIBUTING.md` "What NOT to do": paragraph reminding
+  contributors that the `action-drift` workflow opens a
+  `dependencies-drift` issue within ~7 days of any new `@vN`
+  pin falling behind upstream.
+
+### Changed
+- `.github/workflows/action-drift.yml`: body-assembly collapsed
+  from `sections.push([...].join('\n'))` +
+  `sections.join('\n\n')` to a single
+  `sections.map(s => s.join('\n')).join('\n\n')`.
+
 ## [v500.8.1] - 2026-06-22
 
 ### Fixed
@@ -249,7 +282,9 @@ stay one major-version ahead of any specific FTC SDK binding.
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
      comparison base below to the new tag (e.g. v500.9.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.8.1...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.10.0...HEAD
+[v500.10.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.9.0...v500.10.0
+[v500.9.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.8.1...v500.9.0
 [v500.8.1]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.8.0...v500.8.1
 [v500.8.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.7.0...v500.8.0
 [v500.7.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.6.0...v500.7.0
