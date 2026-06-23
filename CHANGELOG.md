@@ -7,7 +7,7 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
-## [v500.8.1] - 2026-06-24
+## [v500.8.1] - 2026-06-22
 
 ### Fixed
 - `.github/workflows/action-drift.yml`: issue body assembled from
@@ -19,7 +19,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   rendered GitHub slug (`#brownout_threshold` etc.) matches the
   table cross-reference links exactly.
 
-## [v500.8.0] - 2026-06-24
+## [v500.8.0] - 2026-06-22
 
 ### Added
 - `.github/workflows/action-drift.yml`: docker-container actions
@@ -37,7 +37,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   whitespace (e.g. `~/Team Code/voltage-sensor`) survive as
   individual javac arguments.
 
-## [v500.7.0] - 2026-06-24
+## [v500.7.0] - 2026-06-22
 
 ### Added
 - `.github/workflows/action-drift.yml`: enumerated
@@ -59,7 +59,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   logic, and added a commented-out example showing the format for
   a non-identity hard redirect.
 
-## [v500.6.0] - 2026-06-24
+## [v500.6.0] - 2026-06-22
 
 ### Added
 - `ARCHITECTURE.md` tuning recipe documents **both** `Raise` and
@@ -82,7 +82,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   -name '*.java'` + `find test -name '*.java'` glob) so adding
   a new stub interface no longer needs to update two places.
 
-## [v500.5.1] - 2026-06-24
+## [v500.5.1] - 2026-06-22
 
 ### Fixed
 - `.github/workflows/action-drift.yml`: drift check `upstreamLatest
@@ -97,7 +97,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   direction inverted (lowering *delays* protection); corrected
   to `**Raise**\u2026`.
 
-## [v500.5.0] - 2026-06-24
+## [v500.5.0] - 2026-06-22
 
 ### Added
 - `ARCHITECTURE.md` (NEW): the single source of truth for "how
@@ -122,7 +122,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   `ARCHITECTURE.md` before reading the rest of the contributing
   guide.
 
-## [v500.4.3] - 2026-06-23
+## [v500.4.3] - 2026-06-22
 
 ### Changed
 - `SECURITY.md` "Hardening guarantees" GitHub Actions bullet was
@@ -130,7 +130,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   wrapper SHA-256 bullets in the same section.  Cadence
   duplication removed.
 
-## [v500.4.2] - 2026-06-23
+## [v500.4.2] - 2026-06-22
 
 ### Fixed
 - `SECURITY.md` trade-off clause: prior wording ("major-version
@@ -140,7 +140,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   exposure to breaking changes within a major version is
   mitigated by the per-release review at every `v500.x` cut.
 
-## [v500.4.1] - 2026-06-23
+## [v500.4.1] - 2026-06-22
 
 ### Changed
 - `SECURITY.md`: dropped the stale `.github/dependabot.yml`
@@ -149,7 +149,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   review tied to each `v500.x` release) and an explicit
   "accepted trade-off" clause.
 
-## [v500.4.0] - 2026-06-23
+## [v500.4.0] - 2026-06-22
 
 ### Added
 - Multi-LTS CI matrix: JDK 11 + JDK 17 gate every push / pull
@@ -175,7 +175,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   without Dependabot and bumps third-party action versions
   manually.
 
-## [v500.3.0] - 2026-06-23
+## [v500.3.0] - 2026-06-22
 
 ### Changed
 - `.github/workflows/codeql.yml`: `permissions: actions: read`
@@ -188,7 +188,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   behaviour triplets so reporters include the right context
   first try.
 
-## [v500.2.0] - 2026-06-23
+## [v500.2.0] - 2026-06-22
 
 ### Added
 - `CHANGELOG.md` (this file) \u2014 release history in Keep-a-Changelog v1.1.0
@@ -205,7 +205,7 @@ stay one major-version ahead of any specific FTC SDK binding.
   on a fully virgin runner) is also cached.  Key composition already
   includes `gradle.properties` so config-cache toggles invalidate.
 
-## [v500.1.0] - 2026-06-23
+## [v500.1.0] - 2026-06-22
 
 ### Security
 - Pinned `distributionSha256Sum` for `gradle-9.6.0-bin.zip` directly into

@@ -8,8 +8,10 @@ timeline.
 
 | Tag range         | Status          | Patched through |
 |-------------------|-----------------|-----------------|
-| `v500.x.x` (latest) | **Active**    | Latest tag      |
-| `v500.0.0` (initial) | Historical | Upgrade to latest |
+<!-- MAINTAINER: bump the version in the "Supported Versions" table at each release. -->
+
+| `v500.4.0` (latest)  | **Active**    | Latest tag      |
+| `v500.0.0`            | Historical    | Upgrade to latest |
 | anything older    | Not patched     | N/A             |
 
 Only the latest tagged release and the `main` branch receive security
