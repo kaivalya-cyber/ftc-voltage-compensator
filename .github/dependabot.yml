@@ -1,6 +1,3 @@
-# Dependabot config \u2014 weekly bumps of GitHub Actions versions and the
-# Gradle wrapper distribution.  Each weekly PR touches one ecosystem to
-# keep noise low.
 version: 2
 updates:
   - package-ecosystem: "github-actions"

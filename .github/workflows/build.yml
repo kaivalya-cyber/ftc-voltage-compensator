@@ -76,6 +76,9 @@ jobs:
       - name: Run VoltageCompensator unit tests
         run: java -ea -cp build org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest
 
+# Cancel in-flight CI only on PR pushes (so a fast re-push doesn't
+# preempt an otherwise-valid main run).  Pushes to main run to
+# completion; an admin can re-trigger if needed.
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
