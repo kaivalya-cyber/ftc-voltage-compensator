@@ -87,6 +87,32 @@ java -ea -cp build org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest
 
 CI runs the same flow on every push and pull request — see [`.github/workflows/build.yml`](.github/workflows/build.yml).
 
+## Build
+
+The lightweight Gradle-free path is the primary way to build and test:
+
+```sh
+./runtests.sh
+```
+
+Two small Gradle files (`build.gradle`, `settings.gradle`) are also included for teams that prefer Gradle.  They are purely additive — `./runtests.sh` and CI keep working without them.
+
+```sh
+gradle classes       # compile only
+gradle runUnitTests  # compile + run unit tests
+```
+
+(Requires a system-installed Gradle 7.0+; no `gradlew` wrapper is bundled.)
+
+### Wiring into a real FTC Android Studio project
+
+To use these files in your team's robot project, copy:
+
+- `VoltageCompensator.java`     → `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/util/`
+- `VoltageCompensatedTeleOp.java` → `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`
+
+Both files already declare the correct FTC SDK packages, so they drop straight in.  Just remove (or ignore) `build.gradle`, `settings.gradle`, and `runtests.sh` from the copy.  Push the code to the Control Hub via the FTC Robot Controller app to run the OpMode.
+
 ## License
 
 [MIT](LICENSE).

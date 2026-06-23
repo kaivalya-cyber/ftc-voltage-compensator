@@ -1,0 +1,67 @@
+// build.gradle — Optional Gradle wrapper for ftc-voltage-compensator.
+//
+// This file is purely additive; the lightweight ./runtests.sh script and
+// the GitHub Actions workflow continue to work without it.  No Gradle
+// wrapper jar is bundled here — install Gradle (7.0+) if you want to use
+// these tasks.
+//
+// Two goals:
+//   1. Compile the production .java files at the repo root plus the
+//      stub + unit-test sources under test/, using a Java 11 toolchain.
+//   2. Provide a `gradle runUnitTests` task that builds and executes the
+//      VoltageCompensator unit tests via the public main() entry point.
+//
+// Wiring these source files into a real FTC Android Studio project:
+//
+//   VoltageCompensator.java       →
+//       TeamCode/src/main/java/org/firstinspires/ftc/teamcode/util/
+//   VoltageCompensatedTeleOp.java →
+//       TeamCode/src/main/java/org/firstinspires/ftc/teamcode/
+//
+// Then remove (or merge into your project file) build.gradle and
+// settings.gradle from your copy.
+
+plugins {
+    id 'java-library'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            // Production sources live at the repo root, in their canonical
+            // FTC SDK packages.
+            srcDirs = ['.']
+            include 'VoltageCompensator.java',
+                    'VoltageCompensatedTeleOp.java'
+            exclude 'test/**', 'build/**', '.gradle/**'
+        }
+    }
+    test {
+        java {
+            // Stub FTC SDK interfaces + unit tests all live under test/.
+            srcDirs = ['test']
+        }
+    }
+}
+
+tasks.register('runUnitTests', JavaExec) {
+    description = 'Compile and run the VoltageCompensator unit tests.'
+    group       = 'verification'
+    dependsOn   'classes', 'testClasses'
+    classpath   = files(
+        sourceSets.test.runtimeClasspath,
+        sourceSets.main.runtimeClasspath
+    )
+    mainClass    = 'org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest'
+    standardInput = System.in
+    ignoreExitValue = false
+}

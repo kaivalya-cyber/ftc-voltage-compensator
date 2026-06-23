@@ -125,6 +125,9 @@ public class VoltageCompensatorTest {
         testRepeatedUpdatesAtNominalStayStable();
         testRepeatedUpdatesAtLowBatteryStayStable();
 
+        testTrendRegressionDetectsSag();
+        testTrendRegressionDetectsRising();
+
         report();
     }
 
@@ -312,6 +315,33 @@ public class VoltageCompensatorTest {
         for (int i = 0; i < 200; i++) c.update(s);
         assertClose("flat at 11V: voltage",     c.getVoltage(),            11.0, 1e-9);
         assertClose("flat at 11V: compFactor",  c.getCompensationFactor(), 12.0 / 11.0, 1e-6);
+    }
+
+    private static void testTrendRegressionDetectsSag() {
+        // Feed 100 linearly decreasing voltage samples (12.0 \u2192 11.0 over
+        // ~3.3s of loop cycles) so the linear-regression trend buffer
+        // (TREND_WINDOW_SIZE = 100) fills.  Expected OLS slope \u2248
+        // \u22120.01 V/sample, scaled to \u22120.3 V/sec at the 30 Hz loop rate.
+        VoltageCompensator c = new VoltageCompensator(false);
+        for (int i = 0; i < 100; i++) {
+            c.update(new FakeSensor(12.0 - 0.01 * i));
+        }
+        double trend = c.getTrend();
+        assertEqual("trend is negative when voltage is sagging", trend < 0, true);
+        assertClose("trend slope \u2248 -0.3 V/sec for 0.01 V/sample sag at 30 Hz",
+                    trend, -0.3, 0.05);
+    }
+
+    private static void testTrendRegressionDetectsRising() {
+        // Symmetric test: voltage rising should produce a positive slope.
+        VoltageCompensator c = new VoltageCompensator(false);
+        for (int i = 0; i < 100; i++) {
+            c.update(new FakeSensor(11.0 + 0.01 * i));
+        }
+        double trend = c.getTrend();
+        assertEqual("trend is positive when voltage is rising", trend > 0, true);
+        assertClose("trend slope \u2248 +0.3 V/sec for 0.01 V/sample rise at 30 Hz",
+                    trend, 0.3, 0.05);
     }
 
     private static void report() {
