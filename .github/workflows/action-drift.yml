@@ -207,24 +207,40 @@ jobs:
                     + dockerActions.size + ' container action(s) in use';
             }
 
-            const dockerSection = (dockerActions.size === 0 ? [] : [
-              '',
-              '## Docker container actions (registry-level only; drift detection skipped)',
-              '',
-              ...Array.from(dockerActions).sort().map(d => '- `' + d + '`'),
-              '',
-            ]);
+            // Compose the issue body from conditional sections so a docker-only
+            // run does not render an empty `## Drifted pins` heading or the
+            // misleading "still pinned behind the upstream latest tag"
+            // intro paragraph (which only applies to `@`-style actions).
+            const sections = [];
 
-            const body = [
-              'The `action-drift` workflow detected the following GitHub Actions',
-              'still pinned behind the upstream latest tag within the same major',
-              'version.  Bump the `@vN` portion of `uses:` in the relevant',
-              'workflow file to the upstream latest and re-run CI.',
-              '',
-              '## Drifted pins',
-              '',
-              ...lines,
-              ...dockerSection,
+            if (drifted > 0) {
+              sections.push([
+                'The `action-drift` workflow detected the following GitHub Actions',
+                'still pinned behind the upstream latest tag within the same major',
+                'version.  Bump the `@vN` portion of `uses:` in the relevant',
+                'workflow file to the upstream latest and re-run CI.',
+                '',
+                '## Drifted pins',
+                '',
+                ...lines,
+              ].join('\n'));
+            }
+
+            if (dockerActions.size > 0) {
+              sections.push([
+                'Docker container actions (`uses: docker://image:tag`) ship from a',
+                'registry rather than a GitHub repo, so there is no upstream-tag',
+                'API to compare against.  Their presence is tracked here so a',
+                'maintainer sees them; bump them out-of-band if a Docker CVE',
+                'becomes public.',
+                '',
+                '## Docker container actions (registry-level only; drift detection skipped)',
+                '',
+                ...Array.from(dockerActions).sort().map(d => '- `' + d + '`'),
+              ].join('\n'));
+            }
+
+            sections.push([
               '## Why we are not using Dependabot',
               '',
               'See `SECURITY.md` for the rationale; in short, the project',
@@ -234,7 +250,9 @@ jobs:
               'replacement for that lossless auto-bump story.',
               '',
               '> This issue is auto-generated; close it after bumping.',
-            ].join('\n');
+            ].join('\n'));
+
+            const body = sections.join('\n\n');
 
             const issues = await github.paginate(
               github.rest.issues.listForRepo,

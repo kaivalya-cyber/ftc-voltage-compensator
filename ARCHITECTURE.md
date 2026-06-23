@@ -140,9 +140,9 @@ table jump directly to each sub-heading below via GitHub-style
 anchors (constant name lowercased, dashes-for-spaces, underscores
 preserved).
 
-### BROWNOUT_THRESHOLD (default 10.5 V)
+### BROWNOUT_THRESHOLD
 
-Voltage below which every output is halved.
+Default 10.5 V.  Voltage below which every output is halved.
 
 * **Raise** (e.g. 11.0 V) if the robot browns out before your
   nominal end-of-match voltage; half-power protection kicks in
@@ -152,9 +152,9 @@ Voltage below which every output is halved.
   Going too low re-introduces the brownout risk we're protecting
   against.
 
-### MAX_SAG_COMPENSATION (default 1.4×)
+### MAX_SAG_COMPENSATION
 
-Hard ceiling on per-axis boost.
+Default 1.4×.  Hard ceiling on per-axis boost.
 
 * **Lower** (e.g. 1.25×) if you see motor-amp trips in low voltage;
   the 1.4× limit is the highest "safe" form factor for typical
@@ -162,36 +162,39 @@ Hard ceiling on per-axis boost.
 * **Raise** sparingly (e.g. 1.5×) only if you have measured motor
   thermal headroom; >1.4× risks burning motors.
 
-### MAX_SERVO_COMPENSATION (default 1.15×)
+### MAX_SERVO_COMPENSATION
 
-Same idea for continuous-rotation servos, tighter cap because
-position servos jitter when over-driven.
+Default 1.15×.  Same idea for continuous-rotation servos, tighter
+cap because position servos jitter when over-driven.
 
 * **Lower** (e.g. 1.05×) if you see CR-servo jitter at low voltage.
 * **Raise** (e.g. 1.20×) only if your CR servo feels under-powered
   on a sagging pack; >1.25× re-introduces the jitter we're capping
   against.
 
-### ROLLING_WINDOW_SIZE (default 20 — ~0.66 s at 30 Hz)
+### ROLLING_WINDOW_SIZE
 
-Length of the rolling-average circular buffer.
+Default 20 — ~0.66 s smoothing at 30 Hz loop rate.  Length of
+the rolling-average circular buffer.
 
 * **Raise** (e.g. 50) for a smoother voltage line in telemetry.
 * **Lower** (e.g. 10) for faster reaction to a sudden load.
 * Trade-off: more smoothing hides single-sample noise, but adds
   lag on a fast transient.
 
-### TREND_WINDOW_SIZE (default 100 — ~3.3 s at 30 Hz)
+### TREND_WINDOW_SIZE
 
-Length of the linear-regression buffer used to compute the trend slope.
+Default 100 — ~3.3 s of smoothed samples at 30 Hz loop rate.
+Length of the linear-regression buffer used to compute the trend
+slope.
 
 * **Raise** for a more stable slope estimate (less volatile when
   a single noisy sample lands close to the tail).
 * **Lower** for a slope that updates more aggressively.
 
-### TREND_CORRECTION_GAIN (default 0.08)
+### TREND_CORRECTION_GAIN
 
-Predictive boost based on the trend slope.
+Default 0.08.  Predictive boost based on the trend slope.
 
 * **Lower** (e.g. 0.04) for a smoother but slower-sag pre-emption.
 * **Raise** (e.g. 0.12) for a more aggressive but noisier
