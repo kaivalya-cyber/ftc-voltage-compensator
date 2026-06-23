@@ -7,7 +7,11 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
-## [v500.29.0] - 2026-06-22
+## [v500.30.0] - 2026-06-22
+
+### Fixed
+- `CHANGELOG.md` v500.28.0 entry: restored after accidental deletion
+  during the v500.29.0 entry insertion.
 
 ### Fixed
 - `CHANGELOG.md` v500.28.0 entry: "Changed" bullet base-advance
