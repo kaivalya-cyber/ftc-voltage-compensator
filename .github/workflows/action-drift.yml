@@ -40,22 +40,71 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            // Hard-coded list of every third-party action we reference, paired
-            // with the upstream repo to query.  Adding a new third-party action
-            // to ANY workflow file means adding an entry here.
-            // Hard-coded list of every third-party action we reference,
-            // paired with the upstream repo to query.
-            //
-            // IMPORTANT: when adding a new third-party action to ANY
-            // workflow file, add an entry here too; otherwise this
-            // workflow silently under-reports drift.
-            const actions = [
-              { uses: 'actions/checkout@v4',             upstream: 'actions/checkout' },
-              { uses: 'actions/setup-java@v4',           upstream: 'actions/setup-java' },
-              { uses: 'actions/cache@v4',                upstream: 'actions/cache' },
-              { uses: 'github/codeql-action/init@v3',    upstream: 'github/codeql-action' },
-              { uses: 'github/codeql-action/analyze@v3', upstream: 'github/codeql-action' },
-            ];
+            // Auto-extract every `uses: <owner>/<repo>[@<ref>]` line from
+            // .github/workflows/*.yml so that adding a third-party action
+            // to any workflow file picks it up here automatically; the
+            // hard-coded `upstreamMap` below resolves the few cases
+            // where the effective upstream repo differs from the
+            // `uses:` prefix (e.g. `github/codeql-action/init@v3`
+            // ships from the `github/codeql-action` repo).
+            const fs  = require('fs');
+            const path = require('path');
+
+            const upstreamMap = {
+              // github/codeql-action/{init,analyze} ship from the single
+              // github/codeql-action repo; without this map we would
+              // 404 on github/codeql-action/init as an upstream query.
+              'github/codeql-action': 'github/codeql-action',
+            };
+
+            // Walk the path-component ancestors: if none match the
+            // ancestor table exactly, fall back to the prefix already
+            // present in `uses:`.
+            function resolveUpstream(usesPrefix) {
+              if (upstreamMap[usesPrefix]) return upstreamMap[usesPrefix];
+              const parts = usesPrefix.split('/');
+              while (parts.length > 2) {
+                parts.pop();
+                const guess = parts.join('/');
+                if (upstreamMap[guess]) return upstreamMap[guess];
+              }
+              return usesPrefix;
+            }
+
+            // Discover every third-party action referenced by any
+            // workflow file.  Skip this workflow itself so its own
+            // `uses:` lines (including the ones in the underlying
+            // script's issue body) don't pollute the scan.  Skip
+            // local actions (`./something`) and bare cross-repo paths.
+            const seen = new Map();
+            const wfDir = '.github/workflows';
+            const wfFiles = fs.readdirSync(wfDir)
+              .filter(f => f.endsWith('.yml') || f.endsWith('.yaml'))
+              .filter(f => f !== 'action-drift.yml');
+
+            const usesRegex = /^\s*-?\s*uses:\s*([^\s#]+?)@([^\s#]+)/gm;
+
+            for (const wf of wfFiles) {
+              const text = fs.readFileSync(path.join(wfDir, wf), 'utf8');
+              let m;
+              while ((m = usesRegex.exec(text)) !== null) {
+                const owner_repo = m[1];
+                const ref        = m[2];
+                if (owner_repo.startsWith('./')) continue;        // local action
+                if (!owner_repo.includes('/')) continue;          // bare name, ambiguous
+                const uses = owner_repo + '@' + ref;
+                if (!seen.has(uses)) {
+                  seen.set(uses, { uses: uses, upstream: resolveUpstream(owner_repo) });
+                }
+              }
+            }
+
+            const actions = Array.from(seen.values());
+
+            if (actions.length === 0) {
+              console.log('No third-party actions discovered in workflow files.');
+              return;
+            }
 
             // ListTags is ordered by commit date, NOT semver.  Sort
             // highest-first within the major we care about so the

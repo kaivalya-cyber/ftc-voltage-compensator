@@ -122,21 +122,61 @@ internal state is fresh.
 
 ## Tuning recipe
 
-1. Measure voltages during a typical match with telemetry visible.
-2. **Raise** `BROWNOUT_THRESHOLD` if the robot browns out before your
-   nominal end-of-match voltage.  A higher threshold engages the
-   half-power protection earlier; a lower threshold *delays* it and
-   makes brownouts *more* likely.
-3. Lower `MAX_SAG_COMPENSATION` if you see motor-amp trips in low
-   voltage (the 1.4× limit is the highest "safe" form factor; 1.25×
-   may already be too aggressive for some 12 V gearmotors).
-4. Raise `ROLLING_WINDOW_SIZE` if you see jitter in the telemetry line
-   (but expect a lag penalty: smoothed voltage takes longer to react
-   to a sudden load).
-5. Lower `TREND_CORRECTION_GAIN` to disable the predictive sag
-   pre-emption entirely (set to 0.0 for the most conservative
-   driving).  Raising it amplifies noisy slopes — keep it low
-   unless you have a stable pack and want the extra boost.
+For each constant, decide which direction to move from the defaults
+shipped in `VoltageCompensator.java`, and why.  The defaults are tuned
+for a typical 12 V lead-acid pack at 30 Hz loop rate; bespoke teams
+will have one or two constants they want to nudge.
+
+1. **BROWNOUT_THRESHOLD** (default 10.5 V) — voltage below which every
+   output is halved.
+   - **Raise** (e.g. 11.0 V) if the robot browns out before your
+     nominal end-of-match voltage; half-power protection kicks in
+     earlier.
+   - **Lower** (e.g. 9.5 V) only if motors feel sluggish on a fresh
+     pack AND your pack stays above the lower limit all match long.
+     Going too low re-introduces the brownout risk we're protecting
+     against.
+
+2. **MAX_SAG_COMPENSATION** (default 1.4×) — hard ceiling on per-axis
+   boost.
+   - **Lower** (e.g. 1.25×) if you see motor-amp trips in low voltage;
+     the 1.4× limit is the highest "safe" form factor for typical
+     12 V gearmotors.
+   - **Raise** sparingly (e.g. 1.5×) only if you have measured motor
+     thermal headroom; >1.4× risks burning motors.
+
+3. **MAX_SERVO_COMPENSATION** (default 1.15×) — same idea for continuous-
+   rotation servos, tighter cap because position servos jitter when
+   over-driven.
+   - **Lower** (e.g. 1.05×) if you see CR-servo jitter at low voltage.
+   - **Raise** (e.g. 1.20×) only if your CR servo feels under-powered
+     on a sagging pack; >1.25× re-introduces the jitter we're capping
+     against.
+
+4. **ROLLING_WINDOW_SIZE** (default 20 — ~0.66 s at 30 Hz) — length of
+   the rolling-average circular buffer.
+   - **Raise** (e.g. 50) for a smoother voltage line in telemetry.
+   - **Lower** (e.g. 10) for faster reaction to a sudden load.
+   - Trade-off: more smoothing hides single-sample noise, but adds
+     lag on a fast transient.
+
+5. **TREND_WINDOW_SIZE** (default 100 — ~3.3 s at 30 Hz) — length of the
+   linear-regression buffer used to compute the trend slope.
+   - **Raise** for a more stable slope estimate (less volatile when
+     a single noisy sample lands close to the tail).
+   - **Lower** for a slope that updates more aggressively.
+
+6. **TREND_CORRECTION_GAIN** (default 0.08) — predictive boost based on
+   the trend slope.
+   - **Lower** (e.g. 0.04) for a smoother but slower-sag pre-emption.
+   - **Raise** (e.g. 0.12) for a more aggressive but noisier
+     pre-emption.
+   - Set to 0.0 to disable trend correction entirely; the
+     compensator then becomes a pure rolling-average follower.
+
+Always validate a tuning change in a 5-minute driving session with
+telemetry visible before committing; the constants interact and a
+change in one often requires a counter-change in another.
 
 ## Cross-references
 

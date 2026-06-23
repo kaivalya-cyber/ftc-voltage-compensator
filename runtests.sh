@@ -8,21 +8,14 @@ cd "$(dirname "$0")"
 rm -rf build
 mkdir -p build
 
+# Glob over the two production sources at the repo root + every
+# .java file under test/ (stub interfaces + VoltageCompensatorTest).
+# Mirrors .github/workflows/build.yml so adding a new stub interface
+# or test class no longer requires editing this script.
 javac -d build \
   -Xlint:all \
-  VoltageCompensator.java \
-  VoltageCompensatedTeleOp.java \
-  test/com/qualcomm/robotcore/eventloop/opmode/OpMode.java \
-  test/com/qualcomm/robotcore/eventloop/opmode/LinearOpMode.java \
-  test/com/qualcomm/robotcore/eventloop/opmode/TeleOp.java \
-  test/com/qualcomm/robotcore/hardware/DcMotor.java \
-  test/com/qualcomm/robotcore/hardware/Servo.java \
-  test/com/qualcomm/robotcore/hardware/HardwareMap.java \
-  test/com/qualcomm/robotcore/hardware/Gamepad.java \
-  test/com/qualcomm/robotcore/hardware/VoltageSensor.java \
-  test/com/qualcomm/robotcore/util/Range.java \
-  test/org/firstinspires/ftc/robotcore/external/Telemetry.java \
-  test/org/firstinspires/ftc/teamcode/util/VoltageCompensatorTest.java
+  $(find . -maxdepth 1 -name '*.java') \
+  $(find test -name '*.java')
 
 echo "Compilation OK."
 echo
