@@ -7,6 +7,44 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.21.0] - 2026-06-22
+
+### Changed
+- `.github/workflows/tag-changelog-check.yml`: dropped redundant
+  `--force` flag from `git fetch` (the `+` prefix in the refspec
+  already forces updates).
+
+## [v500.20.0] - 2026-06-22
+
+### Changed
+- `.github/workflows/tag-changelog-check.yml`: replaced
+  `git ls-remote` approach with explicit force refspec
+  `git fetch origin '+refs/tags/*:refs/tags/*'` to fetch all tags
+  after checkout, then uses `git tag -l` as before.
+
+## [v500.19.0] - 2026-06-22
+
+### Changed
+- `.github/workflows/tag-changelog-check.yml`: replaced local
+  `git tag -l` + `git fetch --tags` with `git ls-remote --tags
+  origin` to query the remote directly, bypassing local
+  tag-fetching quirks on GitHub Actions.  Added annotated-tag
+  deduplication (`sed 's/\^{}//'`, `sort -Vu`).
+- `CHANGELOG.md`: v500.17.0 heading corrected from `### Fixed`
+  to `### Changed` (the grep fix didn't actually resolve the CI
+  failure — tags still weren't being fetched).
+
+## [v500.18.0] - 2026-06-22
+
+### Added
+- `CHANGELOG.md` entries for v500.15.0, v500.16.0, and v500.17.0
+  (catch-up).
+
+### Changed
+- `.github/workflows/tag-changelog-check.yml`: added explicit
+  `git fetch --tags origin` step after checkout to ensure tags
+  are available before the verification step.
+
 ## [v500.17.0] - 2026-06-22
 
 ### Changed
@@ -352,7 +390,11 @@ stay one major-version ahead of any specific FTC SDK binding.
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
      comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.17.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.21.0...HEAD
+[v500.21.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.20.0...v500.21.0
+[v500.20.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.19.0...v500.20.0
+[v500.19.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.18.0...v500.19.0
+[v500.18.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.17.0...v500.18.0
 [v500.17.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.16.0...v500.17.0
 [v500.16.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.15.0...v500.16.0
 [v500.15.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.14.0...v500.15.0
