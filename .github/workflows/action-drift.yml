@@ -52,9 +52,21 @@ jobs:
 
             const upstreamMap = {
               // github/codeql-action/{init,analyze} ship from the single
-              // github/codeql-action repo; without this map we would
-              // 404 on github/codeql-action/init as an upstream query.
+              // `github/codeql-action` repo, so the walk-up logic lands
+              // on this 2-part ancestor and uses it as the upstream.
+              //
+              // Identity entries (key === value) here are NOT no-ops;
+              // they trigger the walk-up logic to look at this prefix.
+              // Non-identity entries (e.g. key='old-owner/old-repo',
+              // value='new-owner/new-repo') represent an actual upstream
+              // rename that needs a hard redirect.  When adding an
+              // entry, ensure the value matches the current upstream
+              // repo owner/repo; otherwise drift detection will silently
+              // 404 against the wrong path.
               'github/codeql-action': 'github/codeql-action',
+              //
+              // Format for a hypothetical rename (uncomment when needed):
+              //   '<old-owner>/<old-repo>': '<new-owner>/<new-repo>',
             };
 
             // Walk the path-component ancestors: if none match the
@@ -84,6 +96,14 @@ jobs:
 
             const usesRegex = /^\s*-?\s*uses:\s*([^\s#]+?)@([^\s#]+)/gm;
 
+            // Docker container actions (`uses: docker://image:tag`) have
+            // no `@` separator and live on a registry, not on GitHub.
+            // There is no upstream-tag API to track drift against, so
+            // we enumerate them just so a future maintainer sees they
+            // are present and can bump them out-of-band if needed.
+            const dockerRegex  = /^\s*-?\s*uses:\s*(docker:\/\/[^\s#]+)/gm;
+            const dockerActions = new Set();
+
             for (const wf of wfFiles) {
               const text = fs.readFileSync(path.join(wfDir, wf), 'utf8');
               let m;
@@ -96,6 +116,18 @@ jobs:
                 if (!seen.has(uses)) {
                   seen.set(uses, { uses: uses, upstream: resolveUpstream(owner_repo) });
                 }
+              }
+
+              let dm;
+              while ((dm = dockerRegex.exec(text)) !== null) {
+                dockerActions.add(dm[1]);
+              }
+            }
+
+            if (dockerActions.size > 0) {
+              console.log('Docker container actions (drift detection skipped, registry-level only):');
+              for (const d of Array.from(dockerActions).sort()) {
+                console.log('  - ' + d);
               }
             }
 

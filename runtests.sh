@@ -12,10 +12,15 @@ mkdir -p build
 # .java file under test/ (stub interfaces + VoltageCompensatorTest).
 # Mirrors .github/workflows/build.yml so adding a new stub interface
 # or test class no longer requires editing this script.
+SOURCES="$(find . -maxdepth 1 -name '*.java') $(find test -name '*.java')"
+if [ -z "$SOURCES" ]; then
+    echo >&2 "No .java sources found (production + test/ tree)."
+    exit 1
+fi
+
 javac -d build \
   -Xlint:all \
-  $(find . -maxdepth 1 -name '*.java') \
-  $(find test -name '*.java')
+  $SOURCES
 
 echo "Compilation OK."
 echo

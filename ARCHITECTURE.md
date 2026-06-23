@@ -75,16 +75,24 @@ sequenceDiagram
 
 ## Key constants and why
 
-| Constant                  | Value | Why                                                               |
-|---------------------------|-------|-------------------------------------------------------------------|
-| `NOMINAL_VOLTAGE`         | 12.0  | Fresh 12 V lead-acid; design reference for torque normalisation. |
-| `BROWNOUT_THRESHOLD`      | 10.5  | Below this the Control Hub is at risk of browning out itself; halve the output to ride through. |
-| `MAX_SAG_COMPENSATION`    | 1.4   | Hard ceiling on the per-axis multiplier; prevents commanding >40 % boost at very low voltage. |
-| `MAX_SERVO_COMPENSATION`  | 1.15  | Continuous-rotation servos jitter when over-driven; tighter cap.  |
-| `ROLLING_WINDOW_SIZE`     | 20    | ~0.66 s smoothing at 30 Hz loop rate.  Higher = more lag, less jitter. |
-| `TREND_WINDOW_SIZE`       | 100   | ~3.3 s of smoothed samples for the linear-regression slope.       |
-| `TREND_CORRECTION_GAIN`   | 0.08  | How much the predictive trend nudges the factor.  Low to avoid oscillation on noisy slopes. |
-| 30 Hz (loop rate)         | —     | Hard-coded `SAMPLES_PER_SECOND` for slope → V/sec conversion.  Adjust for faster loops. |
+The "Why" column also doubles as the table of contents for the
+[Tuning recipe](#tuning-recipe) section below: every tunable constant
+ends with a *see [Tuning recipe §N]* link so a tuner does not have
+to scroll-hunt.  `NOMINAL_VOLTAGE` and `30 Hz (loop rate)` are not
+tunable knobs (the former is the design reference voltage; the
+latter is `VoltageCompensator.computeLinearRegressionSlope`'s
+hard-coded `SAMPLES_PER_SECOND` constant).
+
+| Constant                  | Value | Why                                                                          |
+|---------------------------|-------|------------------------------------------------------------------------------|
+| `NOMINAL_VOLTAGE`         | 12.0  | Fresh 12 V lead-acid; design reference for torque normalisation. *(Not a tuning knob — match your battery chemistry.)* |
+| `BROWNOUT_THRESHOLD`      | 10.5  | Below this the Control Hub is at risk of browning out itself; halve the output to ride through. *See [Tuning recipe §1](#tuning-recipe).* |
+| `MAX_SAG_COMPENSATION`    | 1.4   | Hard ceiling on the per-axis multiplier; prevents commanding >40 % boost at very low voltage. *See [Tuning recipe §2](#tuning-recipe).* |
+| `MAX_SERVO_COMPENSATION`  | 1.15  | Continuous-rotation servos jitter when over-driven; tighter cap. *See [Tuning recipe §3](#tuning-recipe).* |
+| `ROLLING_WINDOW_SIZE`     | 20    | ~0.66 s smoothing at 30 Hz loop rate.  Higher = more lag, less jitter. *See [Tuning recipe §4](#tuning-recipe).* |
+| `TREND_WINDOW_SIZE`       | 100   | ~3.3 s of smoothed samples for the linear-regression slope. *See [Tuning recipe §5](#tuning-recipe).* |
+| `TREND_CORRECTION_GAIN`   | 0.08  | How much the predictive trend nudges the factor.  Low to avoid oscillation on noisy slopes. *See [Tuning recipe §6](#tuning-recipe).* |
+| 30 Hz (loop rate)         | —     | Hard-coded `SAMPLES_PER_SECOND` for slope → V/sec conversion.  Adjust for faster loops. *(Not a tuning constant — change the constant in `VoltageCompensator.java`.)* |
 
 ## Compensation paths
 
