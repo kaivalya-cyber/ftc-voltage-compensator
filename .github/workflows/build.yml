@@ -1,5 +1,10 @@
 name: build & test
 
+# Minimal token scope — nothing here pushes, only reads the
+# checkout and restores a cache.
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]
@@ -21,6 +26,8 @@ jobs:
       fail-fast: false
       matrix:
         java: ['17', '11']
+
+    timeout-minutes: 15
 
     steps:
       - name: Checkout
@@ -68,3 +75,7 @@ jobs:
 
       - name: Run VoltageCompensator unit tests
         run: java -ea -cp build org.firstinspires.ftc.teamcode.util.VoltageCompensatorTest
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true

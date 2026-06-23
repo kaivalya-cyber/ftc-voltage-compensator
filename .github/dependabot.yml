@@ -1,37 +1,21 @@
-# .github/dependabot.yml
-#
-# Dependabot opens weekly PRs whenever a tracked dependency ships a new
-# patch/minor/major version.  See https://docs.github.com/en/code-security/dependabot
-
+# Dependabot config \u2014 weekly bumps of GitHub Actions versions and the
+# Gradle wrapper distribution.  Each weekly PR touches one ecosystem to
+# keep noise low.
 version: 2
-
 updates:
-  # 1. GitHub Actions workflow versions (actions/checkout, actions/setup-java, ...).
-  #
-  #    SHA-pinning long-lived references to *exact* commit SHAs would be even
-  #    stricter, but Dependabot-managed major-version tags (== v4 above) are
-  #    auto-rolled forward by these PRs and balance supply-chain hygiene with
-  #    maintenance overhead.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "ci"
-    labels:
-      - "dependencies"
-      - "ci"
-
-  # 2. Gradle wrapper distribution.
-  #
-  #    Whenever a new Gradle version is published, Dependabot will update
-  #    gradle/wrapper/gradle-wrapper.properties to the latest patch release
-  #    and open a PR.
+      day: "monday"
+    groups:
+      github-actions:
+        patterns: ["*"]
   - package-ecosystem: "gradle"
     directory: "/"
     schedule:
       interval: "weekly"
-    commit-message:
-      prefix: "gradle"
-    labels:
-      - "dependencies"
+      day: "monday"
+    groups:
+      gradle:
+        patterns: ["*"]
