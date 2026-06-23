@@ -110,11 +110,12 @@ under `test/` so the unit-test invocation still works.
      echo 'OK - all match'
    else
      MISSING=$(comm -23 /tmp/git-tags /tmp/cl-tags | wc -l | tr -d ' ')
-     if [ "$MISSING" -le 2 ]; then
+     EXTRA=$(comm -13 /tmp/git-tags /tmp/cl-tags | wc -l | tr -d ' ')
+     if [ "$MISSING" -le 2 ] && [ "$EXTRA" -eq 0 ]; then
        echo "OK (accepted gap: $MISSING recent tag(s) without CHANGELOG entry)"
      else
-       echo "FAIL: $MISSING tags missing from CHANGELOG"
-       comm -23 /tmp/git-tags /tmp/cl-tags
+       echo "FAIL: $MISSING tags missing from CHANGELOG, $EXTRA untagged CHANGELOG entries"
+       comm -3 /tmp/git-tags /tmp/cl-tags
        exit 1
      fi
    fi
