@@ -7,6 +7,19 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
+## [v500.25.0] - 2026-06-22
+
+### Removed
+- `.github/workflows/tag-changelog-check.yml`: removed after multiple
+  tag-fetching approaches (`fetch-depth: 0`, `fetch-tags: true`,
+  `git fetch --tags`, `git ls-remote`, force refspec) all proved
+  unreliable on GitHub Actions runners.  The local check (documented
+  in `CONTRIBUTING.md`) works reliably.
+
+### Added
+- `CONTRIBUTING.md` "Pull requests" step 7: local tag-changelog
+  consistency check to run before tagging a release.
+
 ## [v500.23.0] - 2026-06-22
 
 ### Added
@@ -411,7 +424,8 @@ stay one major-version ahead of any specific FTC SDK binding.
 <!-- EVERY MAINTAINER: when tagging a new release, advance the [Unreleased]
      comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.23.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.25.0...HEAD
+[v500.25.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.23.0...v500.25.0
 [v500.23.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.22.0...v500.23.0
 [v500.22.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.21.0...v500.22.0
 [v500.21.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.20.0...v500.21.0

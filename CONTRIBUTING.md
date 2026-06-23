@@ -94,6 +94,17 @@ under `test/` so the unit-test invocation still works.
 6. Don't introduce external dependencies (no Maven Central jars, no
    Android Gradle plugin, no Maven, no Gradle wrapper-shaking).  The
    library must remain drop-in for any FTC project.
+7. **Before tagging a release**, run the local tag-changelog
+   consistency check to make sure every `[vX.Y.Z]` CHANGELOG entry
+   has a matching git tag and vice versa:
+   ```sh
+   CHANGELOG_TAGS=$(grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
+   GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
+   diff <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") && echo 'OK'
+   ```
+   (We deliberately do **not** run this as a CI gate \u2014 multiple attempts
+   to fetch all tags on GitHub Actions runners were unreliable.  The
+   local check works every time.)
 
 ## What NOT to do
 
