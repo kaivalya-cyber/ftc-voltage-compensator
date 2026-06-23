@@ -20,7 +20,6 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: 'none'
 
       - name: Compile library + FTC stub interfaces + tests
         run: |
