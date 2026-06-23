@@ -98,9 +98,10 @@ under `test/` so the unit-test invocation still works.
    consistency check to make sure every `[vX.Y.Z]` CHANGELOG entry
    has a matching git tag and vice versa:
    ```sh
-   CHANGELOG_TAGS=$(grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V)
-   GIT_TAGS=$(git tag -l 'v*.*.*' | sort -V)
-   diff <(echo "$CHANGELOG_TAGS") <(echo "$GIT_TAGS") && echo 'OK'
+   grep -oE '^## \[v[0-9]+\.[0-9]+\.[0-9]+\]' CHANGELOG.md | sed 's/^## \[//;s/\]//' | sort -V > /tmp/cl-tags
+   git tag -l 'v*.*.*' | sort -V > /tmp/git-tags
+   diff /tmp/cl-tags /tmp/git-tags && echo 'OK' || echo 'MISMATCH (see diffs above)'
+   rm -f /tmp/cl-tags /tmp/git-tags
    ```
    (We deliberately do **not** run this as a CI gate \u2014 multiple attempts
    to fetch all tags on GitHub Actions runners were unreliable.  The

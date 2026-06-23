@@ -20,6 +20,13 @@ stay one major-version ahead of any specific FTC SDK binding.
 - `CONTRIBUTING.md` "Pull requests" step 7: local tag-changelog
   consistency check to run before tagging a release.
 
+## [v500.24.0] - 2026-06-22
+
+### Fixed
+- `CHANGELOG.md` v500.23.0 entry: "Changed" bullet base-advance
+  direction corrected from `v500.21.0 \u2192 v500.22.0` to
+  `v500.22.0 \u2192 v500.23.0`.
+
 ## [v500.23.0] - 2026-06-22
 
 ### Added
@@ -425,7 +432,8 @@ stay one major-version ahead of any specific FTC SDK binding.
      comparison base below to the new tag (e.g. v500.14.0) and add a link
      reference for it. -->
 [Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.25.0...HEAD
-[v500.25.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.23.0...v500.25.0
+[v500.25.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.24.0...v500.25.0
+[v500.24.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.23.0...v500.24.0
 [v500.23.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.22.0...v500.23.0
 [v500.22.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.21.0...v500.22.0
 [v500.21.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.20.0...v500.21.0
