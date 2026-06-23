@@ -14,6 +14,17 @@ stay one major-version ahead of any specific FTC SDK binding.
   direction corrected from `v500.26.0 \u2192 v500.27.0` to
   `v500.27.0 \u2192 v500.28.0`.
 
+## [v500.28.0] - 2026-06-22
+
+### Added
+- `CHANGELOG.md` entry for v500.27.0 (documenting v500.26.0 entry
+  addition).
+- Local tag-changelog consistency check confirmed 34/34 match.
+
+### Changed
+- `[Unreleased]` comparison base advanced from `v500.27.0` to
+  `v500.28.0`.
+
 ## [v500.27.0] - 2026-06-22
 
 ### Added
