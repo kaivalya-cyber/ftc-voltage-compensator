@@ -11,10 +11,15 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
  */
 public abstract class OpMode {
 
+    // Compile-only stub: the real FTC SDK wires these before runOpMode()
+    // executes.  The test harness MUST NOT instantiate this class for
+    // runtime use \u2014 these declarations exist solely so the production
+    // .java files compile against the test/ classpath.
+
     public HardwareMap hardwareMap = new HardwareMap();
     public Gamepad     gamepad1     = new Gamepad();
     public Gamepad     gamepad2     = new Gamepad();
-    public Telemetry   telemetry;
+    public Telemetry   telemetry;   // deliberately null in the stub
 
     public boolean opModeIsActive() { return false; }
 }

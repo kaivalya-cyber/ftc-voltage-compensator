@@ -111,7 +111,7 @@ To use these files in your team's robot project, copy:
 - `VoltageCompensator.java`     → `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/util/`
 - `VoltageCompensatedTeleOp.java` → `TeamCode/src/main/java/org/firstinspires/ftc/teamcode/`
 
-Both files already declare the correct FTC SDK packages, so they drop straight in.  Just remove (or ignore) `build.gradle`, `settings.gradle`, and `runtests.sh` from the copy.  Push the code to the Control Hub via the FTC Robot Controller app to run the OpMode.
+Both files already declare the correct FTC SDK packages, so they drop straight in.  Just remove (or ignore) `build.gradle`, `settings.gradle`, and `runtests.sh` from the copy.  Deploy from Android Studio to the Robot Controller phone (or use the FTC SDK's gradle tasks) to actually run the OpMode on a Control Hub.
 
 ## License
 

@@ -8,6 +8,9 @@ package com.qualcomm.robotcore.hardware;
  */
 public interface DcMotor {
 
+    // RUN_WITHOUT_ENCODER is the only mode exercised by the reference
+    // OpMode; the other values are kept purely for API parity with the
+    // real FTC SDK and are unused by the test harness.
     enum RunMode {
         RUN_WITHOUT_ENCODER,
         RUN_USING_ENCODER,

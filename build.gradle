@@ -53,6 +53,12 @@ sourceSets {
     }
 }
 
+// The auto-wired `test` task added by `java-library` expects JUnit on the
+// classpath.  We don't depend on JUnit because VoltageCompensatorTest uses
+// a plain main() entry point (see runUnitTests below).  Disable the auto-
+// wired `test` task so `gradle build` and `gradle assemble` keep working.
+tasks.named('test') { enabled = false }
+
 tasks.register('runUnitTests', JavaExec) {
     description = 'Compile and run the VoltageCompensator unit tests.'
     group       = 'verification'

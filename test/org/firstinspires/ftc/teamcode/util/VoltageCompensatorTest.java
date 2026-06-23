@@ -328,7 +328,11 @@ public class VoltageCompensatorTest {
         }
         double trend = c.getTrend();
         assertEqual("trend is negative when voltage is sagging", trend < 0, true);
-        assertClose("trend slope \u2248 -0.3 V/sec for 0.01 V/sample sag at 30 Hz",
+        // OLS regression runs against the SMOOTHED voltage series, so the
+        // trend buffer lags the raw signal by ~ROLLING_WINDOW_SIZE/2 samples
+        // (~10 samples).  A \u00b10.05 V/sec tolerance (~17 %) comfortably
+        // absorbs that steady-state bias \u2014 not a bug.
+        assertClose("trend slope \u2248 -0.3 V/sec for 0.01 V/sample sag at 30 Hz \u00b1 0.05 lag tolerance",
                     trend, -0.3, 0.05);
     }
 
@@ -340,7 +344,9 @@ public class VoltageCompensatorTest {
         }
         double trend = c.getTrend();
         assertEqual("trend is positive when voltage is rising", trend > 0, true);
-        assertClose("trend slope \u2248 +0.3 V/sec for 0.01 V/sample rise at 30 Hz",
+        // Same \u00b10.05 V/sec tolerance rationale as testTrendRegressionDetectsSag
+        // \u2014 absorbs the rolling-buffer lag, not a real defect.
+        assertClose("trend slope \u2248 +0.3 V/sec for 0.01 V/sample rise at 30 Hz \u00b1 0.05 lag tolerance",
                     trend, 0.3, 0.05);
     }
 
