@@ -128,6 +128,8 @@ public class VoltageCompensatorTest {
         testTrendRegressionDetectsSag();
         testTrendRegressionDetectsRising();
 
+        testResetRestoresInitialState();
+
         report();
     }
 
@@ -334,6 +336,26 @@ public class VoltageCompensatorTest {
         // absorbs that steady-state bias \u2014 not a bug.
         assertClose("trend slope \u2248 -0.3 V/sec for 0.01 V/sample sag at 30 Hz \u00b1 0.05 lag tolerance",
                     trend, -0.3, 0.05);
+    }
+
+    private static void testResetRestoresInitialState() {
+        VoltageCompensator c = new VoltageCompensator(true);
+        // Run several updates to move away from initial state.
+        c.update(new FakeSensor(10.0));
+        c.update(new FakeSensor(10.0));
+        c.update(new FakeSensor(10.0));
+        assertEqual("before reset: brownout active at 10V", c.isBrownoutProtected(), true);
+
+        c.reset();
+        // After reset, all fields should match fresh-constructed values.
+        assertClose("reset: smoothed voltage back to nominal", c.getVoltage(), 12.0);
+        assertClose("reset: compFactor back to 1.0", c.getCompensationFactor(), 1.0);
+        assertClose("reset: trend back to 0", c.getTrend(), 0.0);
+        assertEqual("reset: brownout cleared", c.isBrownoutProtected(), false);
+
+        // A subsequent update should work normally (not crash, not NaN).
+        c.update(new FakeSensor(12.0));
+        assertClose("after reset + update: smoothed at 12V", c.getVoltage(), 12.0, 1e-9);
     }
 
     private static void testTrendRegressionDetectsRising() {

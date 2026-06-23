@@ -120,6 +120,13 @@ To use these files in your team's robot project, copy:
 
 Both files already declare the correct FTC SDK packages, so they drop straight in.  Just remove (or ignore) `build.gradle`, `settings.gradle`, and `runtests.sh` from the copy.  Deploy from Android Studio to the Robot Controller phone (or use the FTC SDK's gradle tasks) to actually run the OpMode on a Control Hub.
 
+## Status
+
+**Stable.** 40 unit tests pass on JDK 11 and JDK 17, CI is green, and the
+library is field-ready for FTC TeleOp use.  See [CHANGELOG.md](CHANGELOG.md)
+for the release history and [CONTRIBUTING.md](CONTRIBUTING.md) for the
+development process.
+
 ## License
 
 [MIT](LICENSE).

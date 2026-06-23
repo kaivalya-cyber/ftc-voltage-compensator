@@ -7,7 +7,20 @@ and this project roughly adheres to [Semantic Versioning](https://semver.org/).
 We use 5xx version numbers (v500.x) by convention so the project's revisions
 stay one major-version ahead of any specific FTC SDK binding.
 
-## [v500.35.0] - 2026-06-22
+## [v500.38.0] - 2026-06-22
+
+### Added
+- `VoltageCompensator.reset()`: clears all internal state (buffers,
+  smoothed voltage, trend, brownout flag) for re-initialization
+  between OpMode restarts.
+- `VoltageCompensatorTest.testResetRestoresInitialState()`: verifies
+  all fields return to defaults after a reset.
+- `README.md` "Status" section: declares the library stable and
+  field-ready.
+
+### Changed
+- `[Unreleased]` comparison base advanced from `v500.35.0` to
+  `v500.38.0`.
 
 ### Fixed
 - `CHANGELOG.md` v500.30.0 entry: replaced duplicate content with
@@ -507,7 +520,8 @@ stay one major-version ahead of any specific FTC SDK binding.
      entry, advance the [Unreleased] comparison base below, and add the
      link reference all in the SAME commit that receives the release tag.
      Do NOT create separate "add CHANGELOG entry" tags (see CONTRIBUTING.md). -->
-[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.35.0...HEAD
+[Unreleased]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.38.0...HEAD
+[v500.38.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.35.0...v500.38.0
 [v500.35.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.34.0...v500.35.0
 [v500.34.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.33.0...v500.34.0
 [v500.33.0]: https://github.com/kaivalya-cyber/ftc-voltage-compensator/compare/v500.32.0...v500.33.0

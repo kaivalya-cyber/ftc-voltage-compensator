@@ -213,6 +213,22 @@ public class VoltageCompensator {
         return Range.clip(compensated, -1.0, 1.0);
     }
 
+    /**
+     * Resets all internal state (buffers, smoothed voltage, trend, brownout).
+     * Call when re-initializing the OpMode (e.g. between TeleOp restarts)
+     * so stale readings from a previous run don't carry over.
+     */
+    public void reset() {
+        rollingHead = 0;
+        rollingCount = 0;
+        trendHead = 0;
+        trendCount = 0;
+        smoothedVoltage = NOMINAL_VOLTAGE;
+        trendSlope = 0.0;
+        compensationFactor = 1.0;
+        brownoutActive = false;
+    }
+
     // ── Telemetry helpers ─────────────────────────────────────────────────
 
     /** Returns the current smoothed voltage (V). */
