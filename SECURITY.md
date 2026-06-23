@@ -8,7 +8,7 @@ timeline.
 
 | Tag range         | Status          | Patched through |
 |-------------------|-----------------|-----------------|
-<!-- MAINTAINER: bump the version in the "Supported Versions" table at each release. -->
+<!-- MAINTAINER: bump both the version column and the Patched-through column in the "Supported Versions" table at each release. -->
 
 | `v500.11.0` (latest)  | **Active**    | `v500.11.0`     |
 | `v500.0.0`            | Historical    | Upgrade to latest |
